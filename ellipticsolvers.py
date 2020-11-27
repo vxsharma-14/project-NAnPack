@@ -24,7 +24,7 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
 
@@ -37,7 +37,7 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
 
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -116,7 +116,7 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
                    
@@ -129,7 +129,7 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -219,7 +219,7 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
                    
@@ -232,7 +232,7 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -322,7 +322,7 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
                    
@@ -346,7 +346,7 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -426,7 +426,7 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
                    
@@ -450,7 +450,7 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -543,7 +543,7 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
                    
@@ -567,7 +567,7 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -659,7 +659,7 @@ def ADI(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
     
@@ -672,7 +672,7 @@ def ADI(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
@@ -789,7 +789,7 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
                    nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
                    FrameWrite = InputSettings
                    
@@ -813,7 +813,7 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite = InputSettings
 
