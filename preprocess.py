@@ -97,6 +97,8 @@ def InputParam(InFileName='./Input/InputParameters.dat'):
                 The string value representing the file to be read for
                 simulation inputs. Use ".dat" or ".txt" file extensions
     '''
+
+    import sys
     
     print(f'Reading Input Parameters from file {InFileName}.')
     InFile = open(InFileName, 'r')
@@ -106,43 +108,43 @@ def InputParam(InFileName='./Input/InputParameters.dat'):
     if Line1[0] != "EXPERIME":
         print(f'{Line1[0]}: Record Missing or Misplaced in Line 1')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
         
     Line2 = (InFile.readline()).split()
     if Line2[0] != "GRIDPOINT":
         print(f'{Line2[0]}: Record Missing or Misplaced in Line 2')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
     
     Line3 = (InFile.readline()).split()
     if Line3[0] != "DIMENSION":
         print(f'{Line3[0]}: Record Missing or Misplaced in Line 3')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
         
     Line4 = (InFile.readline()).split()
     if Line4[0] != "COURANT":
         print(f'{Line4[0]}: Record Missing or Misplaced in Line 4')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
         
     Line5 = (InFile.readline()).split()
     if Line5[0] != "CONVERG":
         print(f'{Line5[0]}: Record Missing or Misplaced in Line 5')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
     
     Line6 = (InFile.readline()).split()
     if Line6[0] != "FILENAM":
         print(f'{Line6[0]}: Record Missing or Misplaced in Line 6')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
     
     Line7 = (InFile.readline()).split()
     if Line7[0] != "FRAMESCAP":
         print(f'{Line7[0]}: Record Missing or Misplaced in Line 7')
         print(f'Check File {InFileName}')
-        sys.exit()
+        sys.exit(0)
     
     ExpNumber = Line1[1]
     iMax, jMax = [int(Line2[1]), int(Line2[2])]
@@ -152,13 +154,13 @@ def InputParam(InFileName='./Input/InputParameters.dat'):
     nWrite, OutFileName, nDisplay, HistFileName = [int(Line6[1]), Line6[2]\
                                                   ,int(Line6[3]), Line6[4]]
     FrameOpt, FrameWrite = [int(Line7[1]), (Line7[2])]
-    print('Done')
+    print('Simulation set up done')
 
     OutFileName = './Output/' + OutFileName
     HistFileName = './Output/' + HistFileName
     
     # Return the data using dataclass method
-    return (ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
+    return (ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
             nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
             FrameWrite)
 
