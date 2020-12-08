@@ -1,0 +1,13 @@
+# READ CONSTANTS AND COEFFICIENTS IN NUMERICAL SETUP
+COURANT   0.5
+DIFFUSIV  11.234E-5
+END
+|---------|---------|---------|---------|---------|
+###################################################
+COURANT   CFL
+DIFFUSIV  ALPHA
+END   
+###################################################
+CFL:	     COURANT NUMBER [REAL]
+ALPHA:	     DIFFUSIVITY OR DIFFUSION COEFFICIENT (SI UNITS) [REAL]
+	     (IN PARABOLIC OR MIXED PARABOLIC-HYPERBOLIC PDEs)
