@@ -88,7 +88,7 @@ def WriteConvHistToFile(HistFileName, n, Error, WriteFlag='NO', PrintMsg='NONE')
     HistFile.close()
 
 #***********************************************************************************
-def Write1DSolutionToFile(Out1DFileName, U, Direction):
+def Write1DSolutionToFile(Out1DFileName, iX, U, Direction):
     '''Write output data in 1D format at nodes of X or Y
 
     Call Signature:
@@ -123,7 +123,7 @@ def Write1DSolutionToFile(Out1DFileName, U, Direction):
     OutFile = open(Out1DFileName, "w")
     
     if Direction == 'Y':
-        iX = [11, 15, 20, 25, 26]
+
         X = [dX*i for i in iX]
         print(f'{"Y":^10} {"X=":>6}{X[0]:<6} {"X=":>6}{X[1]:<6} {"X=":>6}{X[2]:<6}\
 {"X=":>6}{X[3]:<6} {"X=":>6}{X[4]:<6}',file=OutFile)
@@ -132,13 +132,13 @@ def Write1DSolutionToFile(Out1DFileName, U, Direction):
 {U[iX[2]][j]:>12.8f} {U[iX[3]][j]:>12.8f} {U[iX[4]][j]:>12.8f}', file=OutFile)
             
     elif Direction == 'X':
-        jY = [11, 15, 20, 25, 26]
-        Y = [dY*j for j in jY]
+
+        Y = [dY*i for i in iX]
         print(f'{"X":^10} {"Y=":>6}{Y[0]:<6} {"Y=":>6}{Y[1]:<6} {"Y=":>6}{Y[2]:<6}\
 {"Y=":>6}{Y[3]:<6} {"Y=":>6}{Y[4]:<6}',file=OutFile)
         for i in range(0,iMax):
-            print(f'{dX*i:<10.6f} {U[i][jY[0]]:>12.8f} {U[i][jY[1]]:>12.8f}\
-{U[i][jY[2]]:>12.8f} {U[i][jY[3]]:>12.8f} {U[i][jY[4]]:>12.8f}', file=OutFile)
+            print(f'{dX*i:<10.6f} {U[i][iX[0]]:>12.8f} {U[i][iX[1]]:>12.8f}\
+{U[i][iX[2]]:>12.8f} {U[i][iX[3]]:>12.8f} {U[i][iX[4]]:>12.8f}', file=OutFile)
             
     else:
         print("Check Direction input again, use either 'X' or 'Y' (case-sensitive)")
