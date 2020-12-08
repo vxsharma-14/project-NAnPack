@@ -15,11 +15,10 @@ def InputParam(InFileName='./Input/SimulationSetUp.dat'):
     InFileName: str, default: './Input/SimulationSetUp.dat'
                 The string value representing the file to be read for
                 simulation inputs. Use ".dat" or ".txt" file extensions
-    '''
-
+    ''' 
     global iMax, jMax
     global Length, Height
-    
+
     print(f'Reading Input Parameters from file {InFileName}.')
     InFile = open(InFileName, 'r')
     #InFile.seek(0)
@@ -151,8 +150,11 @@ def Read1DNodesFile(InFileName='./Input/NodesFor1DOutput.dat'):
 
     print('Nodes data successfully read.')
     
-    OutFile = Line2[1]
-    X = float(Line3[1])
+    OutFile = Line1[1]
+    X = [int(Line2[1]), int(Line2[2]), int(Line2[3]),\
+         int(Line2[4]), int(Line2[5])]
+
+    return OutFile, X
 
     
 #*******************************************************************************
