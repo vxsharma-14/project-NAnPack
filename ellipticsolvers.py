@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import numpy as np
 import preprocess as pre
 import postprocess as post
 import readuserinputs as ri
@@ -130,6 +129,7 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
@@ -234,6 +234,7 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
@@ -454,6 +455,7 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
@@ -572,6 +574,7 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
@@ -678,6 +681,7 @@ def ADI(InputSettings, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
@@ -820,6 +824,7 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Mixed': Mixed-type Boundary Conditions
     '''
     from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
