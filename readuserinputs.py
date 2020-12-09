@@ -15,9 +15,8 @@ def InputParam(InFileName='./Input/SimulationSetUp.dat'):
     InFileName: str, default: './Input/SimulationSetUp.dat'
                 The string value representing the file to be read for
                 simulation inputs. Use ".dat" or ".txt" file extensions
-    ''' 
-    global iMax, jMax
-    global Length, Height
+    '''
+    import globalmod
 
     print(f'Reading Input Parameters from file {InFileName}.')
     InFile = open(InFileName, 'r')
@@ -60,8 +59,8 @@ def InputParam(InFileName='./Input/SimulationSetUp.dat'):
         sys.exit('STOP')
     
     ExpNumber = Line1[1]
-    iMax, jMax = [int(Line2[1]), int(Line2[2])]
-    Length, Height = [float(Line3[1]), float(Line3[2])]
+    globalmod.iMax, globalmod.jMax = [int(Line2[1]), int(Line2[2])]
+    globalmod.Length, globalmod.Height = [float(Line3[1]), float(Line3[2])]
     ConvCriteria, nMax = [float(Line4[1]), int(Line4[2])]
     nWrite, OutFileName, nDisplay, HistFileName = [int(Line5[1]), Line5[2]\
                                                   ,int(Line5[3]), Line5[4]]
