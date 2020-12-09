@@ -1,10 +1,9 @@
 # coding: utf-8
 
-import math
 import numpy as np
 import preprocess as pre
 import postprocess as post
-from readuserinputs import iMax, jMax, Length, Height
+import readuserinputs as ri
 
 #*******************************************************************************
 def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
@@ -36,9 +35,11 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
 
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
+
 
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
@@ -128,10 +129,11 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
-
+    
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
 
@@ -231,6 +233,7 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
@@ -345,10 +348,11 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
-
+    
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
 
@@ -449,10 +453,11 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
-
+    
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
 
@@ -566,10 +571,11 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
-
+    
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
 
@@ -671,10 +677,11 @@ def ADI(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
-
+    
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
 
@@ -812,10 +819,11 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
     ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
                HistFileName, FrameOpt, FrameWrite = InputSettings
-
+    
     dX = Length/(iMax - 1)
     dY = Height/(jMax - 1)
 
