@@ -1,9 +1,8 @@
 # coding: utf-8
 
-import math
-import numpy as np
 import preprocess as pre
 import postprocess as post
+import readuserinputs as ri
 
 #*******************************************************************************
 def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
@@ -24,9 +23,8 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
 
     BCType: {'Dirichlet', 'Neumann', 'Mixed'}
             
@@ -36,13 +34,14 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
 
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
 
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -97,6 +96,8 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Line-Gauss
@@ -116,9 +117,8 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
                    
     BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
             
@@ -128,13 +128,14 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
+    
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -200,6 +201,8 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Line-Gauss
@@ -219,9 +222,8 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
                    
     BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
             
@@ -231,13 +233,14 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
 
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -303,6 +306,8 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Point
@@ -322,9 +327,8 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
                    
     RelaxParam: float
     
@@ -345,13 +349,13 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
+    
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -406,6 +410,8 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Line
@@ -426,9 +432,8 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
                    
     RelaxParam: float
     
@@ -449,13 +454,14 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
+    
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -523,6 +529,8 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Line
@@ -543,9 +551,8 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
                    
     RelaxParam: float
     
@@ -566,13 +573,14 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
+    
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -640,6 +648,8 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def ADI(InputSettings, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Alternating
@@ -659,9 +669,8 @@ def ADI(InputSettings, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
     
     BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
             
@@ -671,13 +680,14 @@ def ADI(InputSettings, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
+    
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -770,6 +780,8 @@ def ADI(InputSettings, BCType='Dirichlet'):
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
 
+    return U
+
 #*******************************************************************************
 def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
     '''Solve a 2D elliptic partial differential equation using the Alternating
@@ -789,9 +801,8 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
                    packed into a tuple.
 
                    This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
+                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
                    
     RelaxParam: float
     
@@ -812,13 +823,14 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             'Neumann': Neumann Boundary Conditions
             'Mixed': Mixed-type Boundary Conditions
     '''
+    from globalmod import iMax, jMax, Length, Height
+    import numpy as np
     
-    ExpNumber, iMax, jMax, L, H, CFL, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
+               HistFileName, FrameOpt, FrameWrite = InputSettings
+    
+    dX = Length/(iMax - 1)
+    dY = Height/(jMax - 1)
 
     # Initialize fields everywhere at t = 0
     U = pre.Initial(iMax, jMax)
@@ -910,4 +922,7 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
 
     # Write output to files
     post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+
+    return U
+
 #*******************************************************************************
