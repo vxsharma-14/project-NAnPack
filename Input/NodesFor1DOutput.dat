@@ -1,10 +1,10 @@
 FILENAM1D ./Output/Ana1D.dat
-NODES     5   8   10   15   18
+NODES     5    8    10   15   18
 END
 |---------|---------|---------|---------|---------|
 ###################################################
 FILENAM1D Out1DFileName
-NODES     i1,i2,i3,i4,i5
+NODES     i1   i2   i3   i4   i5
 END   
 ###################################################
 Out1DFileName:  FILE PATH AND NAME OF THE 1D OUTPUT FILE [STRING]
