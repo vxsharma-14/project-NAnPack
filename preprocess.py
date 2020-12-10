@@ -23,16 +23,22 @@ def BC(U, iMax, jMax, BCType):
 
     if BCType == 'Dirichlet': # Dirichlet boundary conditions
         # along j = 1
-        U[0:-1, 0] = 40.0
+        U[:,0] = 100.0
 
         # along j = jMax
-        U[0:-1, -1] = 10.0
+        U[:,-1] = 0.0
 
         # along i = 1
-        U[0, 0:-1] = 0.0
+        U[0,:] = 0.0
 
         # along i = iMax
-        U[-1, 0:j1] = 0.0
+        U[-1,:] = 0.0
+
+        # at corners
+        U[0,0] = 100.0
+        U[-1,0] = 100.0
+        U[0,-1] = 0.0
+        U[-1,-1] = 0.0
 
     elif BCType == 'Neumann': # Neumann boundary conditions
 
