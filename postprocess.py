@@ -132,7 +132,7 @@ def Write1DSolutionToFile(Out1DFileName, ii, U, Direction):
         print('Writing data at X nodes parallel to Y-axis')
         X = [dX*i for i in ii]
         print(f'{"Y":^10} {"X=":>6}{X[0]:<6.2f} {"X=":>6}{X[1]:<6.2f} {"X=":>6}\
-{X[2]:<6.2f} {"X=":>6}{X[3]:<6.2f} {"X=":>6}{X[4]:<6.2f}',file=OutFile)
+ {X[2]:<6.2f} {"X=":>6}{X[3]:<6.2f} {"X=":>6}{X[4]:<6.2f}',file=OutFile)
         for j in range(0,jMax):
             print(f'{dY*j:<10.6f} {U[ii[0]][j]:>12.8f} {U[ii[1]][j]:>12.8f}\
  {U[ii[2]][j]:>12.8f} {U[ii[3]][j]:>12.8f} {U[ii[4]][j]:>12.8f}', file=OutFile)
@@ -142,7 +142,7 @@ def Write1DSolutionToFile(Out1DFileName, ii, U, Direction):
         print('Writing data at Y nodes parallel to X-axis')
         Y = [dY*i for i in ii]
         print(f'{"X":^10} {"Y=":>6}{Y[0]:<6.2f} {"Y=":>6}{Y[1]:<6.2f} {"Y=":>6}\
-{Y[2]:<6.2f} {"Y=":>6}{Y[3]:<6.2f} {"Y=":>6}{Y[4]:<6.2f}',file=OutFile)
+ {Y[2]:<6.2f} {"Y=":>6}{Y[3]:<6.2f} {"Y=":>6}{Y[4]:<6.2f}',file=OutFile)
         for i in range(0,iMax):
             print(f'{dX*i:<10.6f} {U[i][ii[0]]:>12.8f} {U[i][ii[1]]:>12.8f}\
  {U[i][ii[2]]:>12.8f} {U[i][ii[3]]:>12.8f} {U[i][ii[4]]:>12.8f}', file=OutFile)
