@@ -1,3 +1,4 @@
 # FluiDynPy
-A Python package of numerical solvers for teaching and University research.
+An open-source package of numerical solvers written in Python for teaching and University research.
 
+The package is free to use and share without any restrictions.
