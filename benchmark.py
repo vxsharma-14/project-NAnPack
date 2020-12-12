@@ -3,7 +3,7 @@ import numpy as np
 import postprocess as post
 import math
 
-def HeatConduction(Length, Height, iMax, jMax, T1, T2, T3, T4):
+def HeatConduction(Length, Height, iMax, jMax, T1, T2, T3, T4, Inf):
     '''Obtain the analytical solution of the heat conduction within the 
        rectangular domain. Use the results to validate the numerical solution of
        - the parabolic 2D unsteady heat conduction PDE, or
@@ -32,32 +32,33 @@ def HeatConduction(Length, Height, iMax, jMax, T1, T2, T3, T4):
     
     Call signature:
 
-        HeatConduction(Length, Height, iMax, jMax)
+        HeatConduction(Length, Height, iMax, jMax, T1, T2, T3, T4, Inf)
 
     Parameters
     __________
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    Length, Height: float
 
-                   This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
+                    Length and Height of the domain in consistent SI/British
+                    unit.
+
+    iMax, jMax: int
+
+                Grid points in x and y direction.
+
+    T1, T2, T3, T4: float
+
+                    Boundary temperatures (in degree Kelvin units) as
+                    specified in the above schematic.
     
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+    Inf: int
+
+         This number corresponds to infinity in the summation series in
+         exact solution.
+
+         Start with a smaller number (approx. 20) and user larger value if the
+         solution is not converged when Inf=20.
     '''
-    
-    Inf = 20
     
     L = Length
     W = Height
@@ -164,7 +165,7 @@ def HeatConduction(Length, Height, iMax, jMax, T1, T2, T3, T4):
     # At corners
     TAnaly[0,0] = T1   # At X=0, Y=0
     TAnaly[-1,0] = T1  # At X=L, Y=0
-    TAnaly[0,-1] = T3  # At X=0, Y=H
+    TAnaly[0,-1] = T2  # At X=0, Y=H
     TAnaly[-1,-1] = T3 # At x=L, Y=H
 
     # Write to file
