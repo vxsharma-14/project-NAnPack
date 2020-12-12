@@ -83,7 +83,7 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
 
     flag = 'YES' # Flag to write end of file convergence report
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -188,7 +188,7 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
 
     flag = 'YES' # Flag to write end of file convergence report
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -293,7 +293,7 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
 
     flag = 'YES' # Flag to write end of file convergence report
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -397,7 +397,7 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -515,7 +515,7 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -634,7 +634,7 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -768,12 +768,12 @@ def ADI(InputSettings, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
         msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit method'
+ using Alternating Direction Implicit method.'
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
 
@@ -911,12 +911,12 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
+        msg = f"Solution didn't converge in {nMax} iterations."
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
         msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit SOR method with\nRelaxation Parameter = {RelaxParam} '
+ using Alternating Direction Implicit SOR method with\nRelaxation Parameter = {RelaxParam}.'
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
 
