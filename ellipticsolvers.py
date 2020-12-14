@@ -6,8 +6,8 @@ import readuserinputs as ri
 
 #*******************************************************************************
 def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Point-Gauss
-       Seidel method
+    '''Solve a 2D linear elliptic partial differential equation using the
+       Point-Gauss Seidel method
 
     Call signature:
 
@@ -83,7 +83,7 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
 
     flag = 'YES' # Flag to write end of file convergence report
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -100,8 +100,8 @@ def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
 
 #*******************************************************************************
 def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Line-Gauss
-       Seidel method along constant i direction (parallel to y-axis)    
+    '''Solve a 2D linear elliptic partial differential equation using the
+       Line-Gauss Seidel method along constant i direction (parallel to y-axis)    
 
     Call signature:
 
@@ -188,7 +188,7 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
 
     flag = 'YES' # Flag to write end of file convergence report
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -205,8 +205,8 @@ def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
 
 #*******************************************************************************
 def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Line-Gauss
-       Seidel method along constant j direction (parallel to x-axis)
+    '''Solve a 2D linear elliptic partial differential equation using the
+       Line-Gauss Seidel method along constant j direction (parallel to x-axis)
     
     Call signature:
 
@@ -293,7 +293,7 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
 
     flag = 'YES' # Flag to write end of file convergence report
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -310,8 +310,8 @@ def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
 
 #*******************************************************************************
 def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Point
-       Successive Over-Relaxation (PSOR) method
+    '''Solve a linear 2D elliptic partial differential equation using the
+       Point Successive Over-Relaxation (PSOR) method
     
     Call signature:
 
@@ -397,7 +397,7 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -414,8 +414,8 @@ def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
 
 #*******************************************************************************
 def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Line
-       Successive-Over Relaxation (LSOR) method along constant i direction
+    '''Solve a 2D linear elliptic partial differential equation using the
+       Line Successive-Over Relaxation (LSOR) method along constant i direction
        (parallel to y-axis)
     
     Call signature:
@@ -515,7 +515,7 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -533,8 +533,8 @@ def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
 
 #*******************************************************************************
 def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Line
-       Successive Over-Relaxation (LSOR) method along constant j direction
+    '''Solve a 2D linear elliptic partial differential equation using the
+       Line Successive Over-Relaxation (LSOR) method along constant j direction
        (parallel to x-axis)
     
     Call signature:
@@ -634,7 +634,7 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
@@ -652,8 +652,8 @@ def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
 
 #*******************************************************************************
 def ADI(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Alternating
-       Direction Implicit (ADI) method.
+    '''Solve a 2D linear elliptic partial differential equation using the
+       Alternating Direction Implicit (ADI) method.
     
     Call signature:
 
@@ -768,12 +768,12 @@ def ADI(InputSettings, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
         msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit method.'
+ using Alternating Direction Implicit method'
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
 
@@ -784,8 +784,8 @@ def ADI(InputSettings, BCType='Dirichlet'):
 
 #*******************************************************************************
 def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the Alternating
-       Direction Implicit Successive Over-Relaxation method.
+    '''Solve a 2D elliptic partial differential equation using the linear
+       Alternating Direction Implicit Successive Over-Relaxation method.
     
     Call signature:
 
@@ -911,12 +911,12 @@ def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
             
     flag = 'YES' # Flag to write end of file convergence report 
     if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
+        msg = f"Solution didn't converge in {nMax} iterations"
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
     else:
         msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit SOR method with\nRelaxation Parameter = {RelaxParam}.'
+ using Alternating Direction Implicit SOR method with\nRelaxation Parameter = {RelaxParam} '
         print(msg)
         post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
 
