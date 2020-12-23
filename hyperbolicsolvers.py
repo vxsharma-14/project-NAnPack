@@ -32,7 +32,7 @@ def FirstOrderUpwind1D(U, convX, Linear='Yes'):
     return U, Error
 
 #********************************************************************************
-ddef Lax1D(U, convX, Linear='Yes'):
+def Lax1D(U, convX, Linear='Yes'):
     '''Solve a first-order 1D hyperbolic partial differential equation
        using the explicit Lax method.
        
