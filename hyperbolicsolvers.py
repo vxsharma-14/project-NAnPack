@@ -92,10 +92,11 @@ def LaxWendroff1D(U, convX, Linear='Yes'):
                   0.5*convX2*(U[2:] - 2.0*U[1:-1] + U[0:-2])
     
     elif Linear == 'No':
+        E = U*U/2
         convX2 = convX**2
         U[1:-1] = U[1:-1] - 0.5*convX*(E[2:] - E[0:-2]) +\
                   0.25*convX2*((U[2:] + U[1:-1])*(E[2:] - E[1:-1])\
-                               - (U[1:-1] + U[0:-2])*(E[1:-1] + E[0:-2]))
+                               - (U[1:-1] + U[0:-2])*(E[1:-1] - E[0:-2]))
     
     else:
         print('Use either Yes or No for argument "Linear"')
@@ -148,8 +149,11 @@ def MacCormack1D(U, Utemp, convX, Linear='Yes'):
                         (Utemp[i] - Utemp[i-1])) # Corrector step
     
     elif Linear == 'No':
+        E = U*U/2
+        Etemp=Utemp*Utemp/2
         for i in range (1,iMax-1):
             Utemp[i] = U[i] - convX*(E[i+1] - E[i]) # Predictor step
+            Etemp[i] = Utemp[i]*Utemp[i]/2
             U[i] = 0.5*((U[i] + Utemp[i]) - convX*\
                         (Etemp[i] - Etemp[i-1])) # Corrector step
     
@@ -306,13 +310,8 @@ def BeamAndWarming1D(U, convX, Linear='No'):
     B = U.copy()
     C = U.copy()
     D = U.copy()
-    if n == 1:
-        A = np.zeros(iMax)
-        B = np.zeros(iMax)
-        C = np.zeros(iMax)
-        D = np.zeros(iMax)
-        E = np.zeros(iMax)
-        AA = np.zeros(iMax)
+    E = np.zeros(iMax)
+    AA = np.zeros(iMax)
     
     if Linear == 'Yes':
         print('try again later')
