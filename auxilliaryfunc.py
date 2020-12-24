@@ -5,10 +5,10 @@ def siFunc(Param, Ep):
     '''
     y = Param
     yAbs = abs(y)
-    if yAbs >= Ep:
+    if yAbs >= Eps:
         si = y
     else:
-        si = (y**2 + Ep**2)/(2*Ep)
+        si = (y**2 + Eps**2)/(2*Eps)
         
     return si
 
