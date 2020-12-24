@@ -18,10 +18,7 @@ def FirstOrderUpwind1D(U, convX, Linear='Yes'):
                   - 0.5*convX*(1 - np.sign(convX))*(U[2:] - U[1:-1])
 
     elif Linear == 'No':
-        if n == 1:
-            E = U.copy() # initialize E array
-
-        E[:] = 0.5*U[:]**2
+        E = U*U/2
         U[1:-1] = U[1:-1] - convX*(E[1:-1] - E[0:-2])
     
     else:
@@ -191,20 +188,20 @@ def ModifiedRungeKutta1D(U, convX, Linear='Yes', TVD='No'):
         # -- update BC here
     elif Linear == 'No':
         # 1st stage
-        E[:] = [0.5*i*i for i in U]
+        E = U*U/2
         U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/8.0
         # -- update BC here
         # 2nd stage
-        E[:] = [0.5*i*i for i in U]
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/6.0
+        E = U*U/2
+        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/6.0
         # -- update BC here
         # 3rd stage
-        E[:] = [0.5*i*i for i in U]
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/4.0
+        E = U*U/2
+        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/4.0
         # -- update BC here
         # 4th stage
-        E[:] = [0.5*i*i for i in U]
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/2.0
+        E = U*U/2
+        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/2.0
         # -- update BC here
         
     else:
@@ -213,7 +210,7 @@ def ModifiedRungeKutta1D(U, convX, Linear='Yes', TVD='No'):
     if TVD == 'Yes':
         phiPlus = HartenYeeTVD()
         phiMinus = HartenYeeTVD()
-        U[:] = U[:] - 0.5*convX*(phiPlus - phiMinus)
+        U = U - 0.5*convX*(phiPlus - phiMinus)
 
     Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
     
@@ -270,12 +267,7 @@ def CrankNicolson1D(U, convX, Linear='Yes'):
     B = U.copy()
     C = U.copy()
     D = U.copy()
-    if n == 1:
-        A = np.zeros(iMax)
-        B = np.zeros(iMax)
-        C = np.zeros(iMax)
-        D = np.zeros(iMax)
-    
+        
     if Linear == 'Yes':
         A[1:-1] = 0.25*convX
         B[1:-1] = -1.0
@@ -310,15 +302,13 @@ def BeamAndWarming1D(U, convX, Linear='No'):
     B = U.copy()
     C = U.copy()
     D = U.copy()
-    E = np.zeros(iMax)
-    AA = np.zeros(iMax)
     
     if Linear == 'Yes':
         print('try again later')
 
     elif Linear == 'No':
-        E[:] = [0.5*i*i for i in U]
-        AA[:] = U[:]
+        E = U*U/2
+        AA = U
         A[1:-1] = -0.25*convX*AA[0:-2]
         B[1:-1] = 1.0
         C[1:-1] = 0.25*convX*AA[2:]
