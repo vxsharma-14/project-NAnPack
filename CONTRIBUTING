@@ -1,4 +1,4 @@
-Introduction
+#Introduction
 
 Thank for visiting DIFFUS! Together we can make DIFFUS a great tool for everyone interested in using computational methods for engineering and science research.
 
@@ -12,6 +12,6 @@ Elasticsearch is an open source project and we love to receive contributions fro
 
 When contributing to DIFFUS, we ask that you:
 
-- let us know what you plan in the GitHub Issue tracker so we can provide feedback.
-- provide tests and documentation whenever possible. It is very unlikely that we will accept new features or functionality into DIFFUS without the proper testing and documentation. When fixing a bug, provide a failing test case that your patch solves.
-- open a GitHub Pull Request with your patches and we will review your contribution and respond as quickly as possible. Keep in mind that this is an open source project, and it may take us some time to get back to you. Your patience is very much appreciated.
+* let us know what you plan in the GitHub Issue tracker so we can provide feedback.
+* provide tests and documentation whenever possible. It is very unlikely that we will accept new features or functionality into DIFFUS without the proper testing and documentation. When fixing a bug, provide a failing test case that your patch solves.
+* open a GitHub Pull Request with your patches and we will review your contribution and respond as quickly as possible. Keep in mind that this is an open source project, and it may take us some time to get back to you. Your patience is very much appreciated.
