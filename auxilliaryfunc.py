@@ -1,6 +1,6 @@
 # coding: utf-8
 #*******************************************************************
-def siFunc(Param, Ep):
+def siFunc(Param, Eps):
     '''Calculate Equation 6-127 in Hoffmann Vol. 1
     '''
     y = Param
