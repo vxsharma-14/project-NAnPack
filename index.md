@@ -4,9 +4,7 @@ A package of numerical solvers based on finite-difference methods for one-dimens
 
 Thank you for visiting this page. I hope that together we will make DIFFUS a great tool for all learners and researchers alike.
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
 Getting Started
 
