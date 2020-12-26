@@ -1,7 +1,7 @@
-# Reference an existing issue.
+## Reference an existing issue.
 #...
 
-# Description of proposed changes (include all relevant information).
+## Description of proposed changes (include all relevant information).
 .
 .
 .
