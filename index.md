@@ -9,11 +9,17 @@ Thank you for visiting this page. I hope that together we will make DIFFUS a gre
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
 Getting Started
+
 Installation
+
 Usage
+
 [Contribution](CONTRIBUTIONS.MD)
+
 Credit
+
 [Code of Conduct](CODE-OF-CONDUCT.MD)
+
 [License](LICENSE.MD)
 
 
