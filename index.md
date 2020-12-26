@@ -9,9 +9,9 @@ Thank you for visiting this page. I hope that together we will make DIFFUS a gre
 Getting Started
 Installation
 Usage
-[Contribution](CONTRIBUTIONS.md)
+[Contribution](DIFFUS/main/CONTRIBUTIONS.md)
 Credit
-[Code of Conduct](CODE-OF-CONDUCT.md)
-[License](LICENSE.md)
+[Code of Conduct](DIFFUS/main/CODE-OF-CONDUCT.md)
+[License](DIFFUS/main/LICENSE.md)
 
 
