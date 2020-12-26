@@ -32,7 +32,7 @@ This project and everyone participating in it is governed by the [DIFFUS Code of
 Please report unacceptable behavior to project.diffus@gmail..com.
 
 ## License
-This project is licensed under the terms of the MIT license. See our [licensing policy](LICENSE.md).
+This project is licensed under the terms of the [MIT license](LICENSE.md).
 
 
 
