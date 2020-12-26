@@ -7,22 +7,31 @@ Thank you for visiting this page. I hope that together we will make DIFFUS a gre
 
 
 # Table of Contents
+1. Getting Started
+2. Installation
+3. Usage
+4. Contribution
+5. Credit
+6. Code of Conduct
+7. License
 
-# Installation
 
-# Usage
+## Installation
 
-# Contribution
+## Usage
+
+## Contribution
 
 Want to contribute? Please read the section on [CONTRIBUTION GUIDELINES](CONTRIBUTING.md)
 
-# Credits
+## Credits
 
-# Code of Conduct
+## Code of Conduct
 
-See the repository users' [Code of Conduct].
+This project and everyone participating in it is governed by the [DIFFUS Code of Conduct](CODE-OF-CONDUCT.md). By participating, you are expected to uphold this code.
+Please report unacceptable behavior to project.diffus@gmail..com.
 
-# License
+## License
 This project is licensed under the terms of the MIT license. See our [licensing policy](LICENSE.md).
 
 
