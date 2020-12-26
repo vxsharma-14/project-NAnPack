@@ -19,6 +19,7 @@ Want to contribute? Please read the section on [CONTRIBUTION GUIDELINES](CONTRIB
 # Credits
 
 # License
+This project is licensed under the terms of the MIT license. See our [licensing policy](LICENSE.md)
 
 
 
