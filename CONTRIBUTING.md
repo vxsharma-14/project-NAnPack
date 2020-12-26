@@ -24,21 +24,21 @@ We are also looking for contributions to test crossplatform compability.
 
 When contributing to DIFFUS, we ask that:
 
-### When you find a bug or an issue- 
+###### When you find a bug or an issue- 
 * let us know what you plan in the GitHub Issue tracker so we can provide feedback.
 
-### When you write a patch to fix the bug- 
+###### When you write a patch to fix the bug- 
 * open a new GitHub pull request with the patch.
 * ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 * provide a failing test case that your patch solves.
 
-### When you make changes to the documentation or add document files-
+###### When you make changes to the documentation or add document files-
 * open the new pull request with a clear description of the modification/addition to the documentation. 
 
-### When you remove whitespace, format code, or make a purely cosmetic patch-
+###### When you remove whitespace, format code, or make a purely cosmetic patch-
 * changes in the code that are cosmetic in nature and do not add anything substantial will not be accepted.
 
-### When you intend to add a new feature or change an existing one-
+###### When you intend to add a new feature or change an existing one-
 * email a proposal to the repository owner with the suggested modifications or enhancemenet features in detail and start writing the code.
 * do not open an issue on GitHub until you have collected positive feedback about the change. GitHub issues are primarily intended for bug reports and fixes.
 * It is very unlikely that we will accept new features or functionality into DIFFUS without the proper testing and documentation.
