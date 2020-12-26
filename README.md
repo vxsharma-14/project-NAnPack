@@ -20,11 +20,16 @@ Thank you for visiting this page. I hope that together we will make DIFFUS a gre
 
 ## Usage
 
-## Contribution
+## Running Tests
+
+## Contributing
 
 Want to contribute? Please read the section on [CONTRIBUTION GUIDELINES](CONTRIBUTING.md)
 
-## Credits
+## Versioning
+
+## Authors
+* Vishal Sharma - *Initial Work* - 
 
 ## Code of Conduct
 
@@ -33,6 +38,8 @@ Please report unacceptable behavior to project.diffus@gmail..com.
 
 ## License
 This project is licensed under the terms of the [MIT license](LICENSE.md).
+
+## Credits
 
 
 
