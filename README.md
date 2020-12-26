@@ -1,5 +1,5 @@
 # DIFFUS
-## A Differential eqUations Solvers repository.
+## A DIFFerential eqUations Solvers package.
 
 A package of numerical solvers based on finite-difference methods for one-dimensional and two-dimensional parabolic, elliptic, hyperbolic and mixed partial differential equations written in Python language and inteded for use in teaching and academic research.
 
