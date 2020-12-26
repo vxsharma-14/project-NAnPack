@@ -16,17 +16,39 @@ DIFFUS is an open source project and we love to receive contributions from our c
 
 We are also looking for contributions to test crossplatform compability.
 
-**A Note to contributors from the developer**
+**A Note to contributors from the code author**
 
 *This package is in the infant stage and is capable of solving fundamental one-dimensional or two-dimensional equations on a rectangular grid. The equations included are steady/unsteady heat conduction equations, Poisson's equation, first-order wave equation, and first-order inviscid Burgers equation. I am working on including more solver features that will lead to the capability of solving Euler's equations, Navier-Stokes equations, Maxwell's equations and multi-species NS equations for hypersonic flow for complex geometries. I am also looking forward for proposals to include solvers for other physical processes such as in the field of astrophysics, biofluids, etc.*
 
 ## Things to keep in mind while contributing
 
-When contributing to DIFFUS, we ask that you:
+When contributing to DIFFUS, we ask that:
 
+### When you find a bug or an issue- 
 * let us know what you plan in the GitHub Issue tracker so we can provide feedback.
-* provide tests and documentation whenever possible. It is very unlikely that we will accept new features or functionality into DIFFUS without the proper testing and documentation. When fixing a bug, provide a failing test case that your patch solves.
-* open a GitHub Pull Request with your patches and we will review your contribution and respond as quickly as possible. Keep in mind that this is an open source project, and it may take us some time to get back to you. Your patience is very much appreciated.
+
+### When you write a patch to fix the bug- 
+* open a new GitHub pull request with the patch.
+* ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
+* provide a failing test case that your patch solves.
+
+### When you make changes to the documentation or add document files-
+* open the new pull request with a clear description of the modification/addition to the documentation. 
+
+### When you remove whitespace, format code, or make a purely cosmetic patch-
+* changes in the code that are cosmetic in nature and do not add anything substantial will not be accepted.
+
+### When you intend to add a new feature or change an existing one-
+* email a proposal to the repository owner with the suggested modifications or enhancemenet features in detail and start writing the code.
+* do not open an issue on GitHub until you have collected positive feedback about the change. GitHub issues are primarily intended for bug reports and fixes.
+* It is very unlikely that we will accept new features or functionality into DIFFUS without the proper testing and documentation.
+* provide tests and documentation whenever possible.
+
+Keep in mind that this is an open source project, and it may take us some time to get back to you. Your patience is very much appreciated.
 
 **Working on your first Pull Request?**
 You can learn how from [How to Contribute to an Open Source Project on GitHub](https://kcd.im/pull-request) or [FIRST TIMERS ONLY](https://www.firsttimersonly.com/)
+
+Thanks,
+
+DIFFUS Team
