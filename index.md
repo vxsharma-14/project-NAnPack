@@ -7,17 +7,11 @@ Thank you for visiting this page. I hope that together we will make DIFFUS a gre
 
 
 Getting Started
-
 Installation
-
 Usage
-
-[Contribution](CONTRIBUTIONS.MD)
-
+[Contribution](CONTRIBUTIONS.md)
 Credit
-
-[Code of Conduct](CODE-OF-CONDUCT.MD)
-
-[License](LICENSE.MD)
+[Code of Conduct](CODE-OF-CONDUCT.md)
+[License](LICENSE.md)
 
 
