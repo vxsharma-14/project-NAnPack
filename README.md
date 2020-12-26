@@ -18,8 +18,12 @@ Want to contribute? Please read the section on [CONTRIBUTION GUIDELINES](CONTRIB
 
 # Credits
 
+# Code of Conduct
+
+See the repository users' [Code of Conduct].
+
 # License
-This project is licensed under the terms of the MIT license. See our [licensing policy](LICENSE.md)
+This project is licensed under the terms of the MIT license. See our [licensing policy](LICENSE.md).
 
 
 
