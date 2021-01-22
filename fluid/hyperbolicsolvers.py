@@ -1,564 +1,1107 @@
-# coding: utf-8
-import numpy as np
-#********************************************************************************
-def FirstOrderUpwind1D(U, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit first upwind differencing method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
+'''
++**************************************************************************
++**************************************************************************
++
++   FILE         hyperbolicsolvers.py
++
++   AUTHOR       Vishal Sharma
++
++   VERSION      1.0.0.dev1
++
++   WEBSITE      https://vxsharma-14.github.io/NAnPack/
++
++   NAnPack Learner's Edition is distributed under the MIT License.
++
++   Copyright (c) 2020 Vishal Sharma
++
++   Permission is hereby granted, free of charge, to any person
++   obtaining a copy of this software and associated documentation
++   files (the "Software"), to deal in the Software without restriction,
++   including without limitation the rights to use, copy, modify, merge,
++   publish, distribute, sublicense, and/or sell copies of the Software,
++   and to permit persons to whom the Software is furnished to do so,
++   subject to the following conditions:
++
++   The above copyright notice and this permission notice shall be
++   included in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++   SOFTWARE.
++
++   You should have received a copy of the MIT License along with
++   NAnPack Learner's Edition.
++
++**************************************************************************
++**************************************************************************
+'''
+#**************************************************************************
+def ExplicitFirstUpwind(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burger equation
+    using the explicit first upwind differencing method.
+
+    The wave equation and the Burger equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    The first-order inviscid Burger equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        FirstOrderUpwind(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    Uold = U.copy()
-    
-    if Linear == 'Yes':
+    import numpy as np
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
 
-        U[1:-1] = U[1:-1]\
-                  - 0.5*convX*(1 + np.sign(convX))*(U[1:-1] - U[0:-2])\
-                  - 0.5*convX*(1 - np.sign(convX))*(U[2:] - U[1:-1])
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        positive_a = 1 + np.sign(init.conv) # for positive a
+        negative_a = 1 - np.sign(init.conv) # for negative a
+        U[1:-1] = Uo[1:-1]\
+                  - 0.5*Courant*positive_a*(Uo[1:-1] - Uo[0:-2])\
+                  - 0.5*Courant*negative_a*(Uo[2:] - Uo[1:-1])
 
-    elif Linear == 'No':
-        E = U*U/2
-        U[1:-1] = U[1:-1] - convX*(E[1:-1] - E[0:-2])
-    
-    else:
-        print('Use either Yes or No for argument "Linear"')
-    
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
+    elif init.Model.upper() == 'BURGERS':
+        E = Uo*Uo/2
+        U[1:-1] = Uo[1:-1] - Courant*(E[1:-1] - E[0:-2])
 
-#********************************************************************************
-def Lax1D(U, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit Lax method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
-    '''
-    Uold = U.copy()
-    if Linear == 'Yes':
-        U[1:-1] = 0.5*(U[2:] + U[0:-2]) - 0.5*convX*(U[2:] - U[0:-2])
-    
-    elif Linear == 'No':
-        U[1:-1] = 0.5*(U[2:] + U[0:-2]) - 0.25*(convX*\
-                                                (U[2:]**2 - U[0:-2]**2))
-    
-    else:
-        print('Use either Yes or No for argument "Linear"')
-
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
-
-#********************************************************************************
-def MidpointLeapfrog1D(U, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit Midpoint Leapfrog method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
-    '''
-    
-    if Linear == 'Yes':
-        print('try this later')
-    
-    elif Linear == 'No':
-        print('try this later')
-    
-    else:
-        print('Use either Yes or No for argument "Linear"')
-        
     return U
 
-#********************************************************************************
-def LaxWendroff1D(U, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit Lax-Wendroff method.
+#**************************************************************************
+def Lax(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burger equation
+    using the explicit Lax method.
        
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
-    '''
-    Uold = U.copy()
-    if Linear == 'Yes':
-        convX2 = convX**2
-        U[1:-1] = U[1:-1] - 0.5*convX*(U[2:] - U[0:-2]) +\
-                  0.5*convX2*(U[2:] - 2.0*U[1:-1] + U[0:-2])
-    
-    elif Linear == 'No':
-        E = U*U/2
-        convX2 = convX**2
-        U[1:-1] = U[1:-1] - 0.5*convX*(E[2:] - E[0:-2]) +\
-                  0.25*convX2*((U[2:] + U[1:-1])*(E[2:] - E[1:-1])\
-                               - (U[1:-1] + U[0:-2])*(E[1:-1] - E[0:-2]))
-    
-    else:
-        print('Use either Yes or No for argument "Linear"')
-        
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
+    The wave equation and the Burger equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
 
-#********************************************************************************
-def LaxWendroffMultiStep1D(U, Uhalf, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit multi-step Lax-Wendroff method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
-    '''
-    from globalmod import iMax
-    Uold = U.copy()
-    if Linear == 'Yes':
-        for i in range (1,iMax-1):
-            Uhalf[i] = 0.5*(U[i+1] + U[i]) - 0.5*convX*(U[i+1] - U[i])
-            U[i] = U[i] - convX*(Uhalf[i] - Uhalf[i-1])
-    
-    elif Linear == 'No':
-        print('try this later')
-    
-    else:
-        print('Use either Yes or No for argument "Linear"')
-        
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
 
-#********************************************************************************
-def MacCormack1D(U, Utemp, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit multi-step Lax-Wendroff method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
+    The first-order inviscid Burger equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        Lax(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax
-    Uold = U.copy()
-    if Linear == 'Yes':
-        for i in range (1,iMax-1):
-            Utemp[i] = U[i] - convX*(U[i+1] - U[i]) # Predictor step
-            U[i] = 0.5*((U[i] + Utemp[i]) - convX*\
-                        (Utemp[i] - Utemp[i-1])) # Corrector step
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        U[1:-1] = 0.5*(Uo[2:] + Uo[0:-2])\
+                  - 0.5*Courant*(Uo[2:] - Uo[0:-2])
     
-    elif Linear == 'No':
-        E = U*U/2
+    elif init.Model.upper() == 'BURGERS':
+        E = Uo*Uo/2
+        U[1:-1] = 0.5*(Uo[2:] + Uo[0:-2])\
+                  - 0.25*Courant*(E[2:] - E[0:-2])
+
+    return U
+
+#**************************************************************************
+def MidpointLeapfrog(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burgers equation
+    using the explicit Midpoint Leapfrog method.
+       
+    The wave equation and the Burgers equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        MidpointLeapfrog(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        raise Exception("This formulation is not available for WAVE\
+ equation in this version.")
+    
+    elif init.Model.upper() == 'BURGERS':
+        raise Exception("This formulation is not available for BURGERS\
+ equation in this version.")
+        
+    #return U
+
+#**************************************************************************
+def LaxWendroff(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burgers equation
+    using the explicit Lax-Wendroff method.
+
+    The wave equation and the Burgers equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        LaxWendroff(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        Courant2 = Courant*Courant
+        U[1:-1] = Uo[1:-1] - 0.5*Courant*(Uo[2:] - Uo[0:-2]) +\
+                  0.5*Courant2*(Uo[2:] - 2.0*Uo[1:-1] + Uo[0:-2])
+    
+    elif init.Model.upper() == 'BURGERS':
+        E = Uo*Uo/2
+        Courant2 = Courant*Courant
+        U[1:-1] = Uo[1:-1] - 0.5*Courant*(E[2:] - E[0:-2]) +\
+                  0.25*Courant2*((Uo[2:] + Uo[1:-1])*(E[2:] - E[1:-1])\
+                               - (Uo[1:-1] + Uo[0:-2])*(E[1:-1] - E[0:-2]))
+
+    return U
+
+#**************************************************************************
+def LaxWendroffMultiStep(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation using the explicit multi-step
+    Lax-Wendroff method.
+  
+    The wave equation is the hyperbolic partial differential equation.
+    The first-order wave equation is a linear equation which is expressed
+    as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+                
+    Call signature:
+
+        LaxWendroffMultiStep(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    Uhalf = Uo.copy()
+    if init.Model.upper() == 'FO_WAVE':
+        for i in range (1,init.iMax-1):
+            Uhalf[i] = 0.5*(Uo[i+1] + Uo[i]) - 0.5*Courant*(Uo[i+1] - Uo[i])
+            U[i] = Uo[i] - Courant*(Uhalf[i] - Uhalf[i-1])
+    
+    elif init.Model.upper() == 'BURGERS':
+        raise Exception("This formulation is not available for BURGERS\
+ equation in this version.")
+
+    return U
+
+#**************************************************************************
+def MacCormack(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burgers equation
+    using the explicit MacCormack method.
+   
+    The wave equation and the Burgers equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        MacCormack(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    Utemp = Uo.copy()
+    if init.Model.upper() == 'FO_WAVE':
+        for i in range (1,init.iMax-1):
+            Utemp[i] = Uo[i] - Courant*(Uo[i+1] - Uo[i]) # Predictor step
+            U[i] = 0.5*((Uo[i] + Utemp[i]) -\
+                        Courant*(Utemp[i] - Utemp[i-1])) # Corrector step
+
+    elif init.Model.upper() == 'BURGERS':
+        E = Uo*Uo/2
         Etemp=Utemp*Utemp/2
-        for i in range (1,iMax-1):
-            Utemp[i] = U[i] - convX*(E[i+1] - E[i]) # Predictor step
+        for i in range (1,init.iMax-1):
+            Utemp[i] = Uo[i] - Courant*(E[i+1] - E[i]) # Predictor step
             Etemp[i] = Utemp[i]*Utemp[i]/2
-            U[i] = 0.5*((U[i] + Utemp[i]) - convX*\
-                        (Etemp[i] - Etemp[i-1])) # Corrector step
-    
-    else:
-        print('Use either Yes or No for argument "Linear"')
+            U[i] = 0.5*((Uo[i] + Utemp[i]) -\
+                        Courant*(Etemp[i] - Etemp[i-1])) # Corrector step
 
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
+    return U
 
-#********************************************************************************
-def ModifiedRungeKutta1D(U, convX, Linear='Yes', TVD='No'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the explicit four-stage Modified Runge-Kutta method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
+#**************************************************************************
+def FourthOrderRungeKutta(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burgers equation
+    using the explicit four-stage Runge-Kutta method.
+
+    The wave equation and the Burgers equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        ModifiedRungeKutta(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
 
-    Uold = U.copy()
+    if init.Model.upper() == 'FO_WAVE':
+        raise Exception("This formulation is not available for WAVE\
+ equation in this version.")
+
+    U = Uo.copy()# Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        U1 = Uo.copy()
+        U2 = Uo.copy()
+        U3 = Uo.copy()
+        # 1st stage
+        U1[1:-1] = Uo[1:-1] - 0.5*Courant*(Uo[2:] - Uo[0:-2])/2.0
+        # -- update BC here
+        # 2nd stage
+        U2[1:-1] = Uo[1:-1] - 0.5*Courant*(U1[2:] - U1[0:-2])/2.0
+        # -- update BC here
+        # 3rd stage
+        U3[1:-1] = Uo[1:-1] - Courant*(U2[2:] - U2[0:-2])/2.0
+        # -- update BC here
+        # 4th stage
+        U[1:-1] = Uo[1:-1] - 0.5*Courant*\
+                  (((1.0/6)*(Uo[2:] - Uo[0:-2])) +\
+                   ((1.0/3)*(U1[2:] - U1[0:-2])) +\
+                   ((1.0/3)*(U2[2:] - U2[0:-2])) +\
+                   ((1.0/6)*(U3[2:] - U3[0:-2])))
+        # -- update BC here
     
-    if Linear == 'Yes':
+    elif init.Model.upper() == 'BURGERS':
         # 1st stage
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/8.0
+        U1 = Uo.copy()
+        U2 = Uo.copy()
+        U3 = Uo.copy()
+        E1 = Uo*Uo/2
+        U1[1:-1] = Uo[1:-1] - 0.5*Courant*(E1[2:] - E1[0:-2])/2.0
         # -- update BC here
         # 2nd stage
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/6.0
+        E2 = U1*U1/2
+        U2[1:-1] = Uo[1:-1] - 0.5*Courant*(E2[2:] - E2[0:-2])/2.0
         # -- update BC here
         # 3rd stage
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/4.0
+        E3 = U2*U2/2
+        U3[1:-1] = Uo[1:-1] - Courant*(E3[2:] - E3[0:-2])/2.0
         # -- update BC here
         # 4th stage
-        U[1:-1] = Uold[1:-1] - convX*(U[2:] - U[0:-2])/2.0
+        E4 = U3*U3/2
+        U[1:-1] = Uo[1:-1] - 0.5*Courant*\
+                  (((1.0/6)*(E1[2:] - E1[0:-2])) +\
+                   ((1.0/3)*(E2[2:] - E2[0:-2])) +\
+                   ((1.0/3)*(E3[2:] - E3[0:-2])) +\
+                   ((1.0/6)*(E4[2:] - E4[0:-2])))
         # -- update BC here
-    elif Linear == 'No':
-        # 1st stage
-        E = U*U/2
-        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/8.0
-        # -- update BC here
-        # 2nd stage
-        E = U*U/2
-        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/6.0
-        # -- update BC here
-        # 3rd stage
-        E = U*U/2
-        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/4.0
-        # -- update BC here
-        # 4th stage
-        E = U*U/2
-        U[1:-1] = Uold[1:-1] - convX*(E[2:] - E[0:-2])/2.0
-        # -- update BC here
-        
-    else:
-        print('Use either Yes or No for argument "Linear"')
-        
-    if TVD == 'Yes':
+
+    '''if TVD == 'Yes':
         phiPlus = HartenYeeTVD()
         phiMinus = HartenYeeTVD()
-        U = U - 0.5*convX*(phiPlus - phiMinus)
-
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
+        U = U - 0.5*convX*(phiPlus - phiMinus)'''
     
-    return U, Error
+    return U
 
-#********************************************************************************
-def EulersBTCS1D(n, U, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the implicit Euler's Backward Time Central Space (BTCS) method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
+#**************************************************************************
+def ModifiedRungeKutta(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burgers equation
+    using the explicit four-stage Modified Runge-Kutta method.
+
+    The wave equation and the Burgers equation are the hyperbolic partial
+    differential equation. The first-order wave equation is a linear
+    equation which is expressed as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                E = u^2/2
+                
+    Call signature:
+
+        ModifiedRungeKutta(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax
-    import tridiagonal as td
-    Uold = U.copy()
-    A = U.copy()
-    B = U.copy()
-    C = U.copy()
-    D = U.copy()
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
 
-    if Linear == 'Yes':
-        A[1:-1] = 0.5*convX
-        B[1:-1] = -1.0
-        C[1:-1] = -0.5*convX
-        D[1:-1] = -U[1:-1]
-
-        U = td.TridiagonalSolver(A, B, C, D, U)
-
-    elif Linear == 'No':
-        print('try again later')
-        
-    else:
-        print('Use either Yes or No for argument "Linear"')
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        # 1st stage
+        U[1:-1] = Uo[1:-1] - Courant*(U[2:] - U[0:-2])/8.0
+        # -- update BC here
+        # 2nd stage
+        U[1:-1] = Uo[1:-1] - Courant*(U[2:] - U[0:-2])/6.0
+        # -- update BC here
+        # 3rd stage
+        U[1:-1] = Uo[1:-1] - Courant*(U[2:] - U[0:-2])/4.0
+        # -- update BC here
+        # 4th stage
+        U[1:-1] = Uo[1:-1] - Courant*(U[2:] - U[0:-2])/2.0
+        # -- update BC here
     
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
-
-#********************************************************************************
-def CrankNicolson1D(U, convX, Linear='Yes'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the implicit Crank-Nicolson method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
-    '''
-    from globalmod import iMax
-    import tridiagonal as td
-    Uold = U.copy()
-    A = U.copy()
-    B = U.copy()
-    C = U.copy()
-    D = U.copy()
-        
-    if Linear == 'Yes':
-        A[1:-1] = 0.25*convX
-        B[1:-1] = -1.0
-        C[1:-1] = -0.25*convX
-        D[1:-1] = -U[1:-1] + 0.25*convX*(U[2:] - U[0:-2])
-
-        U = td.TridiagonalSolver(A, B, C, D, U)
-
-    elif Linear == 'No':
-        print('try again later')
-        
-    else:
-        print('Use either Yes or No for argument "Linear"')
-        
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
-    
-    return U, Error
-
-#********************************************************************************
-def BeamAndWarming1D(U, convX, Linear='No'):
-    '''Solve a first-order 1D hyperbolic partial differential equation
-       using the implicit Beam and Warming method.
-       
-       A note of caution
-       For linear problems:     convX = conv*dT/dX
-       For non-linear problems: convX = dT/dX
-    '''
-    from globalmod import iMax
-    import tridiagonal as td
-    Uold = U.copy()
-    A = U.copy()
-    B = U.copy()
-    C = U.copy()
-    D = U.copy()
-    
-    if Linear == 'Yes':
-        print('try again later')
-
-    elif Linear == 'No':
+    elif init.Model.upper() == 'BURGERS':
+        # 1st stage
+        E = Uo*Uo/2
+        U[1:-1] = Uo[1:-1] - Courant*(E[2:] - E[0:-2])/8.0
+        # -- update BC here
+        # 2nd stage
         E = U*U/2
-        AA = U
-        A[1:-1] = -0.25*convX*AA[0:-2]
-        B[1:-1] = 1.0
-        C[1:-1] = 0.25*convX*AA[2:]
-        D[1:-1] = U[1:-1] - 0.5*convX*(E[2:] - E[0:-2]) +\
-                  0.25*convX*(AA[2:]*U[2:] - AA[0:-2]*U[0:-2]) 
-
-        U = td.TridiagonalSolver(A, B, C, D, U)
-
-    else:
-        print('Use either Yes or No for argument "Linear"')
-        
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
+        U[1:-1] = Uo[1:-1] - Courant*(E[2:] - E[0:-2])/6.0
+        # -- update BC here
+        # 3rd stage
+        E = U*U/2
+        U[1:-1] = Uo[1:-1] - Courant*(E[2:] - E[0:-2])/4.0
+        # -- update BC here
+        # 4th stage
+        E = U*U/2
+        U[1:-1] = Uo[1:-1] - Courant*(E[2:] - E[0:-2])/2.0
+        # -- update BC here
     
-    return U, Error
+    return U
 
-#*******************************************************************************
-def SecondOrderTVD(U, convX, LimiterFunc, Limiter):
-    '''Solve a first-order non-linear 1D hyperbolic partial differential
-       equation using the second-order TVD schemes and their various
-       Limiter Functions and Limiters.
+#**************************************************************************
+def EulersBTCS(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation using the implicit Euler's
+    Backward Time Central Space (BTCS) method.
+    
+    The wave equation is the hyperbolic partial differential equation.
+    The first-order wave equation is a linear equation which is expressed
+    as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    Call signature:
+
+        EulersBTCS(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, Eps
-    import tvdfunctions as tvd
-    from auxilliaryfunc import siFunc
-    import sys
-    Uold = U.copy()
-            
-    for i in range (2,iMax-2):
+    import fluid.tridiagonal as trid
 
-        dUiPlus12 = Uold[i+1] - Uold[i]
-        dUiMinus12 = Uold[i] - Uold[i-1]
-        dUiPlus12Abs = abs(dUiPlus12)
-        dUiMinus12Abs = abs(dUiMinus12)
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
 
-        dUiPlus32 = Uold[i+2] - Uold[i+1]
-        dUiMinus32 = Uold[i-1] - Uold[i-2]
-        dUiPlus32Abs = abs(dUiPlus32)
-        dUiMinus32Abs = abs(dUiMinus32)
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        cc = 0.5*Courant
+        A = [cc for i in range(init.iMax)]
+        B = [-1 for i in range(init.iMax)]
+        C = [-cc for i in range(init.iMax)]
+        D = -Uo
+        UU = Uo.copy()
 
-        EiPlus1 = 0.5*Uold[i+1]*Uold[i+1]
-        Ei = 0.5*Uold[i]*Uold[i]
-        EiMinus1 = 0.5*Uold[i-1]*Uold[i-1]
-        EiPlus2 = 0.5*Uold[i+2]*Uold[i+2]
-        EiMinus2 = 0.5*Uold[i-2]*Uold[i-2]
+        U = trid.TridiagonalSolver(init.iMax,A, B, C, D, UU)
 
-        # Equation 6-128
-        if dUiPlus12 != 0:
-            alphaiPlus12 = (EiPlus1 - Ei)/dUiPlus12
+    elif init.Model.upper() == 'BURGERS':
+        raise Exception("This formulation is not available for BURGERS\
+ equation in this version.")
+
+    return U
+
+#**************************************************************************
+def CrankNicolson(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation using the implicit
+    Crank-Nicolson method.
+
+    The wave equation is the hyperbolic partial differential equation.
+    The first-order wave equation is a linear equation which is expressed
+    as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    Call signature:
+
+        CrankNicolson(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    import fluid.tridiagonal as trid
+
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        cc = 0.25*Courant
+        A = [cc for i in range(init.iMax)]
+        B = [-1.0 for i in range(init.iMax)]
+        C = [-cc for i in range(init.iMax)]
+        D = [0 for i in range (init.iMax)]
+        D[1:-1] = -Uo[1:-1] + 0.25*Courant*(Uo[2:] - Uo[0:-2])
+        UU = Uo.copy()
+
+        U = trid.TridiagonalSolver(init.iMax, A, B, C, D, UU)
+
+    elif init.Model.upper() == 'BURGERS':
+        raise Exception("This formulation is not available for BURGERS\
+ equation in this version.")
+
+    return U
+
+#**************************************************************************
+def BeamAndWarming(init, Uo, Courant):
+    '''Solve a first-order 1D wave equation or inviscid Burgers equation
+    using the implicit Beam and Warming method.
+
+    The Burgers equation is the hyperbolic partial differential equation.
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                u: measurable quanity
+                E = u^2/2
+                
+    Call signature:
+
+        BeamAndWarming(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    import fluid.tridiagonal as trid
+
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    if init.Model.upper() == 'FO_WAVE':
+        raise Exception("This formulation is not available for WAVE\
+ equation in this version.")
+
+    elif init.Model.upper() == 'BURGERS':
+        E = Uo*Uo/2
+        cc = 0.25*Courant
+        A = [0.0 for i in range(init.iMax)]
+        B = [1.0 for i in range(init.iMax)]
+        C = [0.0 for i in range(init.iMax)]
+        D = [0.0 for i in range(init.iMax)]
+        A[1:-1] = -cc*Uo[0:-2]
+        C[1:-1] = cc*Uo[2:]
+        D[1:-1] = Uo[1:-1] - 0.5*Courant*(E[2:] - E[0:-2]) +\
+                  0.25*Courant*(Uo[2:]*Uo[2:] - Uo[0:-2]*Uo[0:-2])
+        UU = Uo.copy()
+
+        U = trid.TridiagonalSolver(init.iMax, A, B, C, D, UU)
+
+    return U
+
+#**************************************************************************
+def FirstOrderTVD(init, Uo, Courant):
+    '''Solve a first-order inviscid Burgers equation using the second-
+    order TVD schemes and their various Limiter Functions and Limiters.
+
+    The Burgers equation is the hyperbolic partial differential equation.
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                u: measurable quanity
+                E = u^2/2
+                
+    Call signature:
+
+        FirstOrderTVD(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    import fluid.secondaryfunctions as sec
+
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    if init.Model.upper() == 'FO_WAVE':
+        raise Exception("This formulation is not available for WAVE\
+ equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    #Utemp = Uo.copy()
+    E = Uo*Uo/2
+
+    for i in range (1,init.iMax-1):
+        dUiPlus12 = sec.CalcUi(Uo[i+1], Uo[i])
+        dUiMinus12 = sec.CalcUi(Uo[i], Uo[i-1])
+        #Ei = sec.CalcE(Uo[i])
+        #EiPlus1 = sec.CalcE(Uo[i+1])
+        #EiMinus1 = sec.CalcE(Uo[i-1])
+        # -- Calculate alpha(i+1/2) using equation 6-98
+        if dUiPlus12 == 0:
+            alphaiPlus12 = Uo[i]
         else:
-            alphaiPlus12 = 0.5*(Uold[i+1] + Uold[i])
-
-        if dUiMinus12 != 0:
-            alphaiMinus12 = (Ei - EiMinus1)/dUiMinus12
+            alphaiPlus12 = (E[i+1] - E[i])/dUiPlus12
+        # -- Calculate alpha(i-1/2) using equation 6-100
+        if dUiMinus12 == 0:
+            alphaiMinus12 = Uo[i]
         else:
-            alphaiMinus12 = 0.5*(Uold[i] + Uold[i-1])
-                
-        # .........................................................................
-        if LimiterFunc == 'Harten-Yee-Upwind':
+            alphaiMinus12 = (E[i] - E[i-1])/dUiMinus12
+        # Equation 6-119 and 6-120 in CFD Vol. 1 by Hoffmann
+        phiPlus = abs(alphaiPlus12)*dUiPlus12
+        phiMinus = abs(alphaiMinus12)*dUiMinus12
+        # Equation 6-117 and 6-118 in CFD Vol. 1 by Hoffmann
+        Utemp = Uo[i] - 0.5*Courant*(E[i+1] - E[i-1])
+        U[i] = Utemp + 0.5*Courant*(phiPlus - phiMinus)
 
-            # .....................................................................
-            # Calculate some variables required in Harten-Yee Upwind.
-            # .....................................................................
-            if dUiPlus32 != 0:
-                alphaiPlus32 = (EiPlus2 - EiPlus1)/dUiPlus32
-            else:
-                alphaiPlus32 = 0.5*(Uold[i+2] + Uold[i+1])
+    return U
 
-            if dUiMinus32 != 0:
-                alphaiMinus32 = (EiMinus1 - EiMinus2)/dUiMinus32
-            else:
-                alphaiMinus32 = 0.5*(Uold[i-1] + Uold[i-2])
-                
-            # .....................................................................            
-            if Limiter == 'G':            
-                # Equation 6-130
-                Gi = tvd.LimiterGforHYU(convX,alphaiPlus12,alphaiMinus12,\
-                                        dUiPlus12,dUiMinus12,Eps)
-                GiPlus1 = tvd.LimiterGforHYU(convX,alphaiPlus32,alphaiPlus12,\
-                                             dUiPlus32,dUiPlus12,Eps)
-                GiMinus1 = tvd.LimiterGforHYU(convX,alphaiMinus12,alphaiMinus32,\
-                                              dUiMinus12,dUiMinus32,Eps)
-            # .....................................................................
-            else:
-                print('****** Incorrect TVD Limiter for Harten-Yee Upwind. ******')
-                print("Use Limiter = 'G'.")
-                sys.exit('Program terminating now.')
-                
-            # Calculate Equation 6-126
-            phiPlus, phiMinus = tvd.HartenYeeUp(dUiPlus12, dUiMinus12, GiPlus1,\
-                                                Gi, GiMinus1, alphaiPlus12,\
-                                                alphaiMinus12, Eps)
-            
-        # .........................................................................
-        elif LimiterFunc == 'Modified-Harten-Yee-Upwind':
-            
-            # .....................................................................
-            # Calculate some variables required in Modified Harten-Yee Upwind.
-            # .....................................................................
-            if dUiPlus32 != 0:
-                alphaiPlus32 = (EiPlus2 - EiPlus1)/dUiPlus32
-            else:
-                alphaiPlus32 = 0.5*(Uold[i+2] + Uold[i+1])
+#**************************************************************************
+def SecondOrderTVD(init, Uo, Courant, LimiterFunc, Limiter, Eps=0.1):
+    '''Solve a first-order inviscid Burgers equation using the second-
+    order TVD schemes and their various Limiter Functions and Limiters.
 
-            if dUiMinus32 != 0:
-                alphaiMinus32 = (EiMinus1 - EiMinus2)/dUiMinus32
-            else:
-                alphaiMinus32 = 0.5*(Uold[i-1] + Uold[i-2])
+    The Burgers equation is the hyperbolic partial differential equation.
+    The first-order inviscid Burgers equation is a non-linear equation
+    which is expressed as:
+
+                            du/dt = -u(du/dx)   or,
+
+                            du/dt = -dE/dx
+    where,
+                u: measurable quanity
+                E = u^2/2
                 
-            # .....................................................................
-            if Limiter == 'G1':
-                # Equation 6-132
-                Gi = tvd.LimiterG1forHYU(dUiPlus12,dUiMinus12)
-                GiPlus1 = tvd.LimiterG1forHYU(dUiPlus32,dUiPlus12)
-                GiMinus1 = tvd.LimiterG1forHYU(dUiMinus12,dUiMinus32)            
-            # .....................................................................
-            elif Limiter == 'G2':
-                # Equation 6-133
-                Gi = tvd.LimiterG2forHYU(dUiPlus12,dUiMinus12)
-                GiPlus1 = tvd.LimiterG2forHYU(dUiPlus32,dUiPlus12)
-                GiMinus1 = tvd.LimiterG2forHYU(dUiMinus12,dUiMinus32)
-            # .....................................................................
-            elif Limiter == 'G3':
-                # Equation 6-134
-                Gi = tvd.LimiterG3forHYU(dUiPlus12,dUiMinus12)
-                GiPlus1 = tvd.LimiterG3forHYU(dUiPlus32,dUiPlus12)
-                GiMinus1 = tvd.LimiterG3forHYU(dUiMinus12,dUiMinus32)
-            # .....................................................................
-            elif Limiter == 'G4':
-                # Equation 6-135
-                Gi = tvd.LimiterG4forHYU(dUiPlus12,dUiMinus12)
-                GiPlus1 = tvd.LimiterG4forHYU(dUiPlus32,dUiPlus12)
-                GiMinus1 = tvd.LimiterG4forHYU(dUiMinus12,dUiMinus32)
-            # .....................................................................
-            elif Limiter == 'G5':
-                # Equation 6-136
-                Gi = tvd.LimiterG5forHYU(dUiPlus12,dUiMinus12)
-                GiPlus1 = tvd.LimiterG5forHYU(dUiPlus32,dUiPlus12)
-                GiMinus1 = tvd.LimiterG5forHYU(dUiMinus12,dUiMinus32)
-            # .....................................................................
-            else:
-                print('****** Incorrect TVD Limiter for Modified Harten-Yee Upwind. ******')
-                print("Options 'G1', 'G2', 'G3', 'G4', 'G5'.")
-                sys.exit('Program terminating now.')
-                
-            # Calculate Equation 6-131                
-            phiPlus, phiMinus = tvd.ModHartenYeeUp(dUiPlus12, dUiMinus12, GiPlus1,\
-                                                   Gi, GiMinus1, alphaiPlus12,\
-                                                   alphaiMinus12, convX, Eps)
+    Call signature:
+
+        SecondOrderTVD(init, Uo, Courant)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    import fluid.tvdfunctions as tvd
+    import preprocess.fetchoptions as opt
+
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    if init.Model.upper() == 'FO_WAVE':
+        raise Exception("This formulation is not available for WAVE\
+ equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    E = Uo*Uo/2
+
+    fetch = opt.FetchOptions()
+    limfunc_options = fetch.TVDLimiterFunctionOptions()
+
+    if not LimiterFunc in limfunc_options:
+        raise Exception(f"Invalid flux limiter function selection in the call\
+ to function\nSecondOrderTVD().\Valid options for LimiterFunc are:\
+ {limfunc_options}.")
             
-        # .........................................................................
-        elif LimiterFunc == 'Roe-Sweby-Upwind':
-            
-            # .....................................................................
-            # Calculate some variables required in Row-Sweby Upwind.
-            # .....................................................................
-            zero_filter = 1.e-7 # variable to filter out division by zero
-            if alphaiPlus12 != 0:
-                sigPlus12 = alphaiPlus12/abs(alphaiPlus12)
-            else:
-                sigPlus12 = 0.0
-                
-            if alphaiMinus12 != 0:
-                sigMinus12 = alphaiMinus12/abs(alphaiMinus12)
-            else:
-                sigMinus12 = 0.0
-            
-            if dUiPlus12 >= zero_filter:
-                riPlus = (Uold[i+1+int(sigPlus12)] - Uold[i+int(sigPlus12)])/\
-                         dUiPlus12
-            else:
-                riPlus = 0.0
-                
-            if dUiMinus12 >= zero_filter:
-                riMinus = (Uold[i+int(sigMinus12)] - Uold[i+1+int(sigMinus12)])/\
-                          dUiMinus12               
-            else:
-                riMinus = 0.0
-            
-            # .....................................................................
-            if Limiter == 'G1':
-                # Equation 6-138
-                Gi = tvd.LimiterG1forRSU(riPlus)
-                GiMinus1 = tvd.LimiterG1forRSU(riMinus)         
-            # .....................................................................
-            elif Limiter == 'G2':
-                # Equation 6-139
-                Gi = tvd.LimiterG2forRSU(riPlus)
-                GiMinus1 = tvd.LimiterG2forRSU(riMinus)      
-            # .....................................................................
-            elif Limiter == 'G3':
-                # Equation 6-140
-                Gi = tvd.LimiterG3forRSU(riPlus)
-                GiMinus1 = tvd.LimiterG3forRSU(riMinus)
-            # .....................................................................
-            else:
-                print('****** Incorrect TVD Limiter for Roe-Sweby Upwind. ******')
-                print("Options: 'G1', 'G2', 'G3'.")
-                sys.exit('Program terminating now.')
-                
-            # Calculate Equation 6-137
-            phiPlus, phiMinus = tvd.RoeSwebyUp(dUiPlus12, dUiMinus12, Gi, GiMinus1,\
-                                               alphaiPlus12, alphaiMinus12, convX)
-        
-        # .........................................................................
-        elif LimiterFunc == 'Davis-Yee-Symmetric':
-            
-            # .....................................................................
-            if Limiter == 'G1':
-                # Equation 6-142
-                GiPlus12 = tvd.LimiterG1forDYS(dUiMinus12, dUiPlus12, dUiPlus32)
-                GiMinus12 = tvd.LimiterG1forDYS(dUiMinus32, dUiMinus12, dUiPlus12)
-            # .....................................................................
-            elif Limiter == 'G2':
-                # Equation 6-143
-                GiPlus12 = tvd.LimiterG2forDYS(dUiMinus12, dUiPlus12, dUiPlus32)
-                GiMinus12 = tvd.LimiterG2forDYS(dUiMinus32, dUiMinus12, dUiPlus12)
-            # .....................................................................
-            elif Limiter == 'G3':
-                # Equation 6-144
-                GiPlus12 = tvd.LimiterG3forDYS(dUiPlus12, dUiMinus12, dUiPlus32)
-                GiMinus12 = tvd.LimiterG3forDYS(dUiMinus12, dUiMinus32, dUiPlus12)
-            # .....................................................................
-            else:
-                print('****** Incorrect TVD Limiter for Davis-Yee Symmetric. ******')
-                print("Options: 'G1', 'G2', 'G3'.")
-                sys.exit('Program terminating now.')
-                
-            # Calculate Equation 6-137
-            phiPlus, phiMinus = tvd.DavisYeeSym(dUiPlus12, dUiMinus12, GiPlus12,\
-                                                GiMinus12, alphaiPlus12, alphaiMinus12,\
-                                                convX, Eps)
-        
-        # .........................................................................
-        else:
-            print('****** Incorrect Limiter Function Selection ******.')
-            print("Options: 'Harten-Yee-Upwind'.")
-            print("         'Modified-Harten-Yee-Upwind'.")
-            print("         'Roe-Sweby-Upwind'.")
-            print("         'Davis-Yee-Symmetric'.")
-            sys.exit('Program terminating now.')                   
+    for i in range (2,init.iMax-2):
+        phiPlus, phiMinus = tvd.CalculateTVD(i, Uo, E, Eps, Courant,\
+                                             Limiter, LimiterFunc)
 
         # Equation 6-124 and 6-125 in Hoffmann Vol. 1
-        hPlus = 0.5*(EiPlus1 + Ei + phiPlus)
-        hMinus = 0.5*(Ei + EiMinus1 + phiMinus)
+        hPlus = 0.5*(E[i+1] + E[i] + phiPlus)
+        hMinus = 0.5*(E[i] + E[i-1] + phiMinus)
 
-        # Equation 6-123    
-        U[i] = Uold[i] - convX*(hPlus - hMinus)
-        
-    Error = abs(Uold[1:-1] - U[1:-1]).sum() # absolute error
+        # Equation 6-123
+        U[i] = Uo[i] - Courant*(hPlus - hMinus)
 
-    return U, Error
+    return U
 
-#*******************************************************************************
+#**************************************************************************
+#def FluxCorrectedTransport(init, Uo, Courant, Damp1, Damp2):
+    '''Solve a first-order 1D wave equation using the Flux Corrected
+    Transport scheme for the Lax-Wendroff method.
+   
+    The wave equation is the hyperbolic partial differential equation.
+    The first-order wave equation is a linear equation which is expressed
+    as:
+
+                            du/dt = -a(du/dx)       for a>0
+    where,
+                u: measurable quanity
+                a: constant speed
+
+    Call signature:
+
+        FluxCorrectedTransport(init, Uo, Courant, Damp1, Damp2)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    Courant : float
+
+              Courant number (entered as user input in file).
+
+    Damp1 : float
+
+            Damping term which is added to the predictor step.
+
+    Damp2 : float
+
+            Antii-diffusive term which is added to the corrector step
+            to remove excessive damping.
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+'''    import fluid.secondaryfunctions as sf
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 2:
+        raise Exception("This formulation is only available for 1D first\
+ order wave equation or the inviscid Burgers equation in this version.")
+
+    U = Uo.copy() # Initialize U
+    Utemp = Uo.copy()
+    if init.Model.upper() == 'FO_WAVE':
+        Courant2 = Courant*Courant
+        for i in range (1,init.iMax-1):
+            # Predictor Step
+            Utemp[i] = Uo[i]\
+                       - 0.5*Courant*(Uo[i+1] - Uo[i-1])\
+                       + (Damp1 + 0.5*Courant2)*\
+                           (Uo[i+1] - 2.0*Uo[i] + Uo[i-1])
+        for i in range (2,init.iMax-2):
+            # Corrector step
+            U[i] = Utemp[i]\
+                   - Damp2*(Utemp[i+1] - 2.0*Utemp[i] + Utemp[i-1])
+
+    elif init.Model.upper() == 'BURGERS':
+        raise Exception("This formulation is not available for BURGERS\
+ equation in this version.")
+
+    return U'''
+#**************************************************************************

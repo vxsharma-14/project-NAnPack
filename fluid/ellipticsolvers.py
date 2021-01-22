@@ -1,928 +1,708 @@
-# coding: utf-8
+'''
++**************************************************************************
++**************************************************************************
++
++   FILE         ellipticsolvers.py
++
++   AUTHOR       Vishal Sharma
++
++   VERSION      1.0.0.dev1
++
++   WEBSITE      https://vxsharma-14.github.io/NAnPack/
++
++   NAnPack Learner's Edition is distributed under the MIT License.
++
++   Copyright (c) 2020 Vishal Sharma
++
++   Permission is hereby granted, free of charge, to any person
++   obtaining a copy of this software and associated documentation
++   files (the "Software"), to deal in the Software without restriction,
++   including without limitation the rights to use, copy, modify, merge,
++   publish, distribute, sublicense, and/or sell copies of the Software,
++   and to permit persons to whom the Software is furnished to do so,
++   subject to the following conditions:
++
++   The above copyright notice and this permission notice shall be
++   included in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++   SOFTWARE.
++
++   You should have received a copy of the MIT License along with
++   NAnPack Learner's Edition.
++
++**************************************************************************
++**************************************************************************
+'''
+#**************************************************************************
+def PointGaussSeidel(init, Uo):
+    '''Solve a 2D Poisson's equation using the Point-Gauss Seidel method.
 
-import preprocess as pre
-import postprocess as post
-import readuserinputs as ri
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
 
-#*******************************************************************************
-def PointGaussSeidel(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D linear elliptic partial differential equation using the
-       Point-Gauss Seidel method
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
 
     Call signature:
 
-        PointGaussSeidel(InputSettings, BCType)
+        PointGaussSeidel(init, Uo)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
+    init :
 
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
+    Uo : 2D array
+       
+         The dependent variable obtained from the previous iteration
+         level, n.
 
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
+    A = 0.5/(1.0 + B2)
 
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-
-
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
-
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-
-    Beta = dX/dY
-    B2 = Beta**2.0
-    A = 0.5/(1 + B2)
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax:
-        Error = 0.0
-        n = n + 1
-        
-        for i in range (1, iMax-1):
-            for j in range (1, jMax-1):
-                Uold = U[i][j]
-                U[i][j] = A*(U[i+1][j] + U[i-1][j] + B2*(U[i][j+1] + U[i][j-1])) # Point Gauss_Seidel method
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-
-        # Write convergence history log to a file
-        post.WriteConvHistToFile(HistFileName, n, Error)
-   
-
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-        
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-
-    flag = 'YES' # Flag to write end of file convergence report
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Point Gauss Seidel method.'
-        print(msg)
-        print()
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+    # Python numpy array slicing operation cannot be used in PGS method
+    # because PGS utilizes solution at k+1 level at points (i-1,j) and
+    # (i,j-1) which can only be taken into account using FOR loops.
+    # Numpy slicing operation below will result in Jacobi iteration method.
+    # U[1:-1,1:-1] = A*(U[2:,1:-1] + U[0:-2,1:-1] +\
+    #                   B2*(U[1:-1,2:] + U[1:-1,0:-2]))
+    # Another point to note that in the POISSON'S SOLVERS formulation, the
+    # dependent variable U is used on RHS of discretized eqn instead of Uo
+    # as in other MODELS, which is due to the formulation requirement to use
+    # values of dependent variable from advanced time step (k+1) at points
+    # (i-1,j) or (i,j-1).
+    for i in range (1, init.iMax-1):
+        for j in range (1, init.jMax-1):
+            U[i][j] = A*(U[i+1][j] + U[i-1][j] +\
+                         B2*(U[i][j+1] + U[i][j-1]))
 
     return U
 
-#*******************************************************************************
-def LineGaussSeidel_i(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D linear elliptic partial differential equation using the
-       Line-Gauss Seidel method along constant i direction (parallel to y-axis)    
+#**************************************************************************
+def LineGaussSeidel_i(init, Uo):
+    '''Solve a 2D Poisson's equation using the Line-Gauss Seidel method
+    along constant i direction (parallel to y-axis).
+
+    The Poisson's equation is a elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
 
     Call signature:
 
-        LineGaussSeidel_i(InputSettings, BCType)
+        LineGaussSeidel_i(init, Uo)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
-                   
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    import numpy as np
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
-
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    H = np.zeros(jMax)
-    G = np.zeros(jMax)
-    
-    Beta = dX/dY
-    A = Beta**2.0
-    B = -2.0*(1.0 + A)
-    C = Beta**2.0
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        for i in range (1, iMax-1):
-            H[0] = 0.0
-            G[0] = U[i][0]
-            for j in range (1, jMax-1):
-                H[j] = C/(B - A*H[j-1])
-                D = -(U[i+1][j] + U[i-1][j])
-                G[j] = (D - A*G[j-1])/(B - A*H[j-1])
-            for j in range (jMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[j]*U[i][j+1] + G[j] # Line Gauss_Seidel method along constant i
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-
-        # Write convergence history log to a file
-        post.WriteConvHistToFile(HistFileName, n, Error)
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-
-    flag = 'YES' # Flag to write end of file convergence report
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Line Gauss Seidel method along\nconstant y-direction.'
-        print(msg)
-        print()
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+    import fluid.tridiagonal as trid
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
+    A = [B2 for j in range (init.jMax)]
+    B = [-2.0*(1.0 + B2) for j in range (init.jMax)]
+    C = [B2 for j in range (init.jMax)]
+    D = [0 for j in range (init.jMax)]
+    UU = [0 for j in range (init.jMax)]
+    # NOTE that in the POISSON'S SOLVERS formulation, the dependent variable U
+    # is used on RHS of discretized eqn instead of Uo as in other MODELS,
+    # which is due to the formulation requirement to use values of dependent
+    # variable from advanced time steps (k+1) at points (i-1,j) or (i,j-1).
+    for i in range (1, init.iMax-1):
+        UU[0] = U[i][0] # Convert U to 1-D array for Tridiagonal solver
+        UU[-1] = U[i][init.jMax-1]
+        for j in range (1, init.jMax-1):
+            D[j] = -(U[i+1][j] + U[i-1][j])
+        UU = trid.TridiagonalSolver(init.jMax,A,B,C,D,UU)
+        for j in range (1, init.jMax-1):
+            U[i][j] = UU[j]
 
     return U
 
-#*******************************************************************************
-def LineGaussSeidel_j(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D linear elliptic partial differential equation using the
-       Line-Gauss Seidel method along constant j direction (parallel to x-axis)
+#**************************************************************************
+def LineGaussSeidel_j(init, Uo):
+    '''Solve a 2D Poisson's equation using the Line-Gauss Seidel method
+    along constant j direction (parallel to x-axis)
+
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
     
     Call signature:
 
-        LineGaussSeidel_j(InputSettings, BCType)
+        LineGaussSeidel_j(init, Uo)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
-                   
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    import numpy as np
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
-
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    H = np.zeros(iMax)
-    G = np.zeros(iMax)
-    
-    Beta = dX/dY
-    A = Beta**2.0
-    B = -2.0*(1.0 + A)
-    C = Beta**2.0
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        for j in range (1, jMax-1):
-            H[0] = 0.0
-            G[0] = U[0][j]
-            for i in range (1, iMax-1):
-                H[i] = C/(B - A*H[i-1])
-                D = -(U[i][j+1] + U[i][j-1])
-                G[i] = (D - A*G[i-1])/(B - A*H[i-1])
-            for i in range (iMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[i]*U[i+1][j] + G[i] # Line Gauss_Seidel method along constant j 
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-   
-        # Write convergence history log to a file
-        post.WriteConvHistToFile(HistFileName, n, Error)
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-
-    flag = 'YES' # Flag to write end of file convergence report
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Line Gauss Seidel method along\nconstant x-direction.'
-        print(msg)
-        print()
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+    import fluid.tridiagonal as trid
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
+    A = [B2 for i in range (init.iMax)]
+    B = [-2.0*(1.0 + B2) for i in range (init.iMax)]
+    C = [B2 for i in range (init.iMax)]
+    D = [0 for i in range (init.iMax)]
+    UU = [0 for i in range (init.iMax)]
+    # NOTE that in the POISSON'S SOLVERS formulation, the dependent variable U
+    # is used on RHS of discretized eqn instead of Uo as in other MODELS,
+    # which is due to the formulation requirement to use values of dependent
+    # variable from advanced time steps (k+1) at points (i-1,j) or (i,j-1).
+    for j in range (1, init.jMax-1):
+        UU[0] = U[0][j] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[init.iMax-1][j]
+        for i in range (1, init.iMax-1):
+            D[i] = -(U[i][j+1] + U[i][j-1])
+        UU = trid.TridiagonalSolver(init.iMax,A,B,C,D,UU)
+        for i in range (1, init.iMax-1):
+            U[i][j] = UU[i]
 
     return U
 
-#*******************************************************************************
-def PSOR(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a linear 2D elliptic partial differential equation using the
-       Point Successive Over-Relaxation (PSOR) method
-    
+#**************************************************************************
+def PSOR(init, Uo, RelaxParam=1.78):
+    '''Solve a 2D Poisson's equation using the Point Successive Over-
+    Relaxation (PSOR) method.
+
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
+
     Call signature:
 
-        PSOR(InputSettings, RelaxParam, BCType)
+        PSOR(init, Uo, RelaxParam)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
-                   
-    RelaxParam: float
-    
-                Relaxation Parameter is used for faster convergence of PSOR method.
-                Specify RelaxParam values between 0 and 2 to obtain convergence.
-                If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
-                If RelaxParam = 1: Point Gauss-Seidel method is recovered.
-                An optimum value is determined by performing numerical experimentations.
-                RelaxParam = 1.78 was found to be an optimum value for PSOR method for
-                the problem with a rectangular domain having uniform grid step with the
-                Dirichlet BC imposed (see Hoffmann Vol. 1, pg 164, 170).
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
+
+    RelaxParam : float, Default = 1.78
+
+                 Relaxation Parameter is used for faster convergence of
+                 PSOR method. Specify RelaxParam values between 0 and 2.0
+                 to obtain convergence.
+                 If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
+                 If RelaxParam = 1: Point Gauss-Seidel method is recovered.
+                 An optimum value is determined by performing numerical
+                 experimentations.
+                 RelaxParam = 1.78 was found to be an optimum value for
+                 PSOR method for the problem with a rectangular domain
+                 having uniform grid step with the
+                 Dirichlet BC imposed (see Hoffmann Vol. 1, pg 164, 170).
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
-
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    
-    Beta = dX/dY
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
     B2 = Beta**2.0
     A = 0.5/(1.0 + B2)
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        for i in range (1, iMax-1):
-            for j in range (1, jMax-1):
-                Uold = U[i][j]
-                U[i][j] = (1 - RelaxParam)*U[i][j] + RelaxParam*\
-                          A*(U[i+1][j] + U[i-1][j] +\
-                          B2*(U[i][j+1] + U[i][j-1])) # Point Successive Over Relaxation method
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-   
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Point Successive Over-Relaxation method\nwith Relaxation Parameter = {RelaxParam}.'
-        print(msg)
-        print()
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+    # Python numpy array slicing operation cannot be used in PSOR method
+    # because PGS utilizes solution at k+1 level at points (i-1,j) and
+    # (i,j-1) which can only be taken into account using FOR loops.
+    # Numpy slicing operation is given below but it is not PSOR method.
+    # U[1:-1,1:-1] = (1.0 - RelaxParam)*Uo[1:-1,1:-1] +\
+    #                 RelaxParam*A*(Uo[2:,1:-1] + Uo[0:-2,1:-1] +\
+    #                               B2*(Uo[1:-1,2:] + Uo[1:-1,0:-2]))
+    # Another point to note that in the POISSON'S SOLVERS formulation, the
+    # dependent variable U is used on RHS of discretized eqn instead of Uo
+    # as in other MODELS, which is due to the formulation requirement to use
+    # values of dependent variable from advanced time step (k+1) at points
+    # (i-1,j) or (i,j-1).
+    for i in range (1, init.iMax-1):
+        for j in range (1, init.jMax-1):
+            U[i][j] = (1 - RelaxParam)*U[i][j] +\
+                      RelaxParam*A*(U[i+1][j] + U[i-1][j] +\
+                                    B2*(U[i][j+1] + U[i][j-1]))
 
     return U
 
-#*******************************************************************************
-def LSOR_i(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D linear elliptic partial differential equation using the
-       Line Successive-Over Relaxation (LSOR) method along constant i direction
-       (parallel to y-axis)
+#**************************************************************************
+def LSOR_i(init, Uo, RelaxParam=1.265):
+    '''Solve a 2D Poisson's equation using the Line Successive-Over
+    Relaxation (LSOR) method along constant i direction (parallel to
+    y-axis).
+
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
     
     Call signature:
 
-        LSOR_i(InputSettings, RelaxParam, BCType)
+        LSOR_i(init, Uo, RelaxParam)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
                    
-    RelaxParam: float
+    RelaxParam : float, Default = 1.265
     
-                Relaxation Parameter is used for faster convergence of LSOR method.
-                Specify RelaxParam values between 0 and 2 to obtain convergence.
-                If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
-                If RelaxParam = 1: Line Gauss-Seidel method is recovered.
-                An optimum value is determined by performing numerical experimentations.
-                RelaxParam = 1.265 was found to be an optimum value for LSOR_i method 
-                for the problem with a rectangular domain having uniform grid step with
-                the Dirichlet BC imposed (see Hoffmann Vol. 1, pg 165, 171).
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+                 Relaxation Parameter is used for faster convergence of
+                 LSOR method. Specify RelaxParam values between 0 and 2.0
+                 to obtain convergence.
+                 If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
+                 If RelaxParam = 1: Line Gauss-Seidel method is recovered.
+                 An optimum value is determined by performing numerical
+                 experimentations.
+                 RelaxParam = 1.265 was found to be an optimum value for
+                 LSOR_i method for the problem with a rectangular domain
+                 having uniform grid step with the Dirichlet BC imposed
+                 (see Hoffmann Vol. 1, pg 165, 171).
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    import numpy as np
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
+    import fluid.tridiagonal as trid
 
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    H = np.zeros(jMax)
-    G = np.zeros(jMax)
-    
-    Beta = dX/dY
-    B2 = Beta**2.0
-    A = RelaxParam*B2
-    B = -2.0*(1+B2)
-    C = RelaxParam*B2
-    n = 0
+    shapeU = Uo.shape # Obtain Dimension
 
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        for i in range (1, iMax-1):
-            H[0] = 0.0
-            G[0] = U[i][0]
-            for j in range (1, jMax-1):
-                H[j] = C/(B - A*H[j-1])
-                D = (1 - RelaxParam)*B*U[i][j] -\
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
+    A = [RelaxParam*B2 for j in range (init.jMax)]
+    B = [-2.0*(1.0 + B2) for j in range (init.jMax)]
+    C = [RelaxParam*B2 for j in range (init.jMax)]
+    D = [0 for j in range (init.jMax)]
+    UU = [0 for j in range (init.jMax)]
+    # NOTE that in the POISSON'S SOLVERS formulation, the dependent variable U
+    # is used on RHS of discretized eqn instead of Uo as in other MODELS,
+    # which is due to the formulation requirement to use values of dependent
+    # variable from advanced time steps (k+1) at points (i-1,j) or (i,j-1).
+    for i in range (1, init.iMax-1):
+        UU[0] = U[i][0] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[i][init.jMax-1]
+        for j in range (1, init.jMax-1):
+            D[j] = (1.0 - RelaxParam)*B[j]*U[i][j] -\
                     RelaxParam*(U[i+1][j] + U[i-1][j])
-                G[j] = (D - A*G[j-1])/(B - A*H[j-1])
-            for j in range (jMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[j]*U[i][j+1] + G[j] # Line Successive Over Relaxation method along constant i
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-   
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Line Successive Over-Relaxation method along\nconstant y-direction with\
- Relaxation Parameter = {RelaxParam}.'
-        print(msg)
-        print()
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+        UU = trid.TridiagonalSolver(init.jMax, A, B, C, D, UU)
+        for j in range (1,init.jMax-1):
+            U[i][j] = UU[j]
 
     return U
 
-#*******************************************************************************
-def LSOR_j(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D linear elliptic partial differential equation using the
-       Line Successive Over-Relaxation (LSOR) method along constant j direction
-       (parallel to x-axis)
+#**************************************************************************
+def LSOR_j(init, Uo, RelaxParam=1.265):
+    '''Solve a 2D Poisson's equation using the Line Successive Over-
+    Relaxation (LSOR) method along constant j direction (parallel to
+    x-axis).
+
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
     
     Call signature:
 
-        LSOR_j(InputSettings, RelaxParam, BCType)
+        LSOR_j(init, Uo, RelaxParam)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
                    
-    RelaxParam: float
+    RelaxParam : float, Default = 1.265
     
-                Relaxation Parameter is used for faster convergence of LSOR method.
-                Specify RelaxParam values between 0 and 2 to obtain convergence.
-                If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
-                If RelaxParam = 1: Line Gauss-Seidel method is recovered.
-                An optimum value is determined by performing numerical experimentations.
-                RelaxParam = 1.265 was found to be an optimum value for LSOR_j method 
-                for the problem with a rectangular domain having uniform grid step with
-                the Dirichlet BC imposed (see Hoffmann Vol. 1, pg 165, 171).
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+                 Relaxation Parameter is used for faster convergence of
+                 LSOR method. Specify RelaxParam values between 0 and 2.0
+                 to obtain convergence.
+                 If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
+                 If RelaxParam = 1: Line Gauss-Seidel method is recovered.
+                 An optimum value is determined by performing numerical
+                 experimentations.
+                 RelaxParam = 1.265 was found to be an optimum value for
+                 LSOR_i method for the problem with a rectangular domain
+                 having uniform grid step with the Dirichlet BC imposed
+                 (see Hoffmann Vol. 1, pg 165, 171).
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    import numpy as np
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
+    import fluid.tridiagonal as trid
 
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    H = np.zeros(iMax)
-    G = np.zeros(iMax)
-    
-    Beta = dX/dY
-    B2 = Beta**2.0
-    A = RelaxParam
-    B = -2.0*(1+B2)
-    C = RelaxParam
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        for j in range (1, jMax-1):
-            H[0] = 0.0
-            G[0] = U[0][j]
-            for i in range (1, iMax-1):
-                H[i] = C/(B - A*H[i-1])
-                D = (1 - RelaxParam)*B*U[i][j] -\
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
+    A = [RelaxParam for i in range (init.iMax)]
+    B = [-2.0*(1.0 + B2) for i in range (init.iMax)]
+    C = [RelaxParam for i in range (init.iMax)]
+    D = [0 for i in range (init.iMax)]
+    UU = [0 for i in range (init.iMax)]
+    # NOTE that in the POISSON'S SOLVERS formulation, the dependent variable U
+    # is used on RHS of discretized eqn instead of Uo as in other MODELS,
+    # which is due to the formulation requirement to use values of dependent
+    # variable from advanced time steps (k+1) at points (i-1,j) or (i,j-1).
+    for j in range (1, init.jMax-1):
+        UU[0] = U[0][j] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[init.iMax-1][j]
+        for i in range (1, init.iMax-1):
+            D[i] = (1.0 - RelaxParam)*B[i]*U[i][j] -\
                     RelaxParam*B2*(U[i][j+1] + U[i][j-1])
-                G[i] = (D - A*G[i-1])/(B - A*H[i-1])
-            for i in range (iMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[i]*U[i+1][j] + G[i] # Line Successive Over Relaxation method along constant j
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-   
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Line Successive Over-Relaxation method along\nconstant x-direction with\
- Relaxation Parameter = {RelaxParam}.'
-        print(msg)
-        print()
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+        UU = trid.TridiagonalSolver(init.iMax,A,B,C,D,UU)
+        for i in range (1,init.iMax-1):
+            U[i][j] = UU[i]
 
     return U
 
-#*******************************************************************************
-def ADI(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D linear elliptic partial differential equation using the
-       Alternating Direction Implicit (ADI) method.
+#**************************************************************************
+def ADI(init, Uo):
+    '''Solve a 2D Poisson's equation using the Alternating Direction
+    Implicit (ADI) method.
+
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
     
     Call signature:
 
-        ADI(InputSettings, BCType)
+        ADI(init, Uo)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    import numpy as np
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
+    import fluid.tridiagonal as trid
 
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    Uhalf = pre.Initial (iMax, jMax) # Uhalf is U at time level (n + 1/2)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    Uhalf = pre.BC(Uhalf, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    ijMax = max(iMax, jMax)
-    H = np.zeros(ijMax)
-    G = np.zeros(ijMax)
-    
-    Beta = dX/dY
-    B2 = Beta**2.0
-    n = 0
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    Uhalf = Uo.copy() # Uhalf is U at time level (n + 1/2)
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
+    # NOTE that in the POISSON'S SOLVERS formulation, the dependent variable U
+    # is used on RHS of discretized eqn instead of Uo as in other MODELS,
+    # which is due to the formulation requirement to use values of dependent
+    # variable from advanced time steps (k+1) at points (i-1,j) or (i,j-1).
+    #**********************************************************************
+    # This block of codes solves for U at
+    # time level n + 1/2 (i.e. = Uhalf) along constant j line
+    # Eq. 5.22 using Tridiagonal system Appendix B in
+    # Hoffmann CFD Vol.1
+    #**********************************************************************
+    A = [1.0 for i in range (init.iMax)]
+    B = [-2.0*(1.0 + B2) for i in range (init.iMax)]
+    C = [1.0 for i in range (init.iMax)]
+    D = [0 for i in range (init.iMax)]
+    UU = [0 for i in range (init.iMax)]
+    for j in range (1, init.jMax-1):
+        UU[0] = U[0][j] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[init.iMax-1][j]
+        for i in range (1, init.iMax-1):
+            D[i] = -B2*(U[i][j+1] + Uhalf[i][j-1])
+        UU = trid.TridiagonalSolver(init.iMax,A,B,C,D,UU)
+        for i in range (1,init.iMax-1):
+            # Alternating Direction Implicit method in x-direction
+            Uhalf[i][j] = UU[i]
 
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        #***********************************************************************
-        # This block of codes solves for U at time level n + 1/2 (i.e. = Uhalf) 
-        # along constant j line 
-        # Eq. 5.22 using Tridiagonal system Appendix B in Hoffmann CFD Vol.1
-        #***********************************************************************
-        A = 1.0
-        B = -2.0*(1 + B2)
-        C = 1.0
-        for j in range (1, jMax-1):
-            H[0] = 0.0
-            G[0] = U[0][j]
-            for i in range (1, iMax-1):
-                H[i] = C/(B - A*H[i-1])
-                D = -B2*(U[i][j+1] + Uhalf[i][j-1])
-                G[i] = (D - A*G[i-1])/(B - A*H[i-1])
-            for i in range (iMax-2,0,-1):
-                Uhalf[i][j] = -H[i]*Uhalf[i+1][j] + G[i] # Alternating Direction Implicit method in x-direction
-                
-        Uhalf = pre.BC(Uhalf, iMax, jMax, BCType) # Update boundary conditions for Uhalf
-        
-        #***********************************************************************
-        # This block of codes solves for U at time level n + 1  
-        # along constant i line
-        # Eq. 5.23 using Tridiagonal system Appendix B in Hoffmann CFD Vol.1
-        #***********************************************************************
-        A = B2
-        B = -2.0*(1 + B2)
-        C = B2
-        for i in range (1, iMax-1):
-            H[0] = 0.0
-            G[0] = U[i][0]
-            for j in range (1, jMax-1):
-                H[j] = C/(B - A*H[j-1])
-                D = -(Uhalf[i+1][j] + U[i-1][j])
-                G[j] = (D - A*G[j-1])/(B - A*H[j-1])
-            for j in range (jMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[j]*U[i][j+1] + G[j] # Alternating Direction Implicit method in y-direction
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-   
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit method'
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+    #**********************************************************************
+    # This block of codes solves for U at time level n + 1
+    # along constant i line
+    # Eq. 5.23 using Tridiagonal system Appendix B in
+    # Hoffmann CFD Vol.1
+    #**********************************************************************
+    A = [B2 for j in range (init.jMax)]
+    B = [-2.0*(1 + B2)  for j in range (init.jMax)]
+    C = [B2  for j in range (init.jMax)]
+    D = [0 for j in range (init.jMax)]
+    UU = [0  for j in range (init.jMax)]
+    for i in range (1, init.iMax-1):
+        UU[0] = U[i][0] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[i][init.jMax-1]
+        for j in range (1, init.jMax-1):
+            D[j] = -(Uhalf[i+1][j] + U[i-1][j])
+        UU = trid.TridiagonalSolver(init.jMax,A,B,C,D,UU)
+        for j in range (1,init.jMax-1):
+            # Alternating Direction Implicit method in y-direction
+            U[i][j] = UU[j]
 
     return U
 
-#*******************************************************************************
-def ADISOR(InputSettings, RelaxParam, BCType='Dirichlet'):
-    '''Solve a 2D elliptic partial differential equation using the linear
-       Alternating Direction Implicit Successive Over-Relaxation method.
+#**************************************************************************
+def ADISOR(init, Uo, RelaxParam=1.27):
+    '''Solve a 2D Poisson's equation using Alternating Direction Implicit
+    Successive Over-Relaxation method.
+
+    The Poisson's equation is an elliptic partial differential equation.
+    A typical example of a Poisson's equation is the steady state heat
+    conduction equation, which is expressed as:
+
+                        (d2u/dx2) + (d2u/dy2) = f(x,y)
+
+    where,
+                u: measurable quanity
     
     Call signature:
 
-        ADI(InputSettings, RelaxParam, BCType)
+        ADISOR(init, Uo, RelaxParam)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax,, nWrite, OutFileName,\
-                   nDisplay, HistFileName, FrameOpt, FrameWrite = InputSettings
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 2D array
+
+         The dependent variable obtained from the previous iteration
+         level, n.
                    
-    RelaxParam: float
+    RelaxParam : float, Default = 1.27
     
-                Relaxation Parameter is used for faster convergence of ADISOR method.
-                Specify RelaxParam values between 0 and 2 to obtain convergence.
-                If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
-                If RelaxParam = 1: Alternating Direction Implicit method is recovered.
-                An optimum value is determined by performing numerical experimentations.
-                RelaxParam = 1.27 was found to be an optimum value for ADISOR method 
-                for the problem with a rectangular domain having uniform grid step with
-                the Dirichlet BC imposed (see Hoffmann Vol. 1, pg 172, 183).
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+                 Relaxation Parameter is used for faster convergence of
+                 ADISOR method. Specify RelaxParam values between 0 and 2.0
+                 to obtain convergence.
+                 If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
+                 If RelaxParam = 1: Alternating Direction Implicit method
+                 is recovered.
+                 An optimum value is determined by performing numerical
+                 experimentations.
+                 RelaxParam = 1.27 was found to be an optimum value for
+                 ADISOR method for the problem with a rectangular domain
+                 having uniform grid step with the Dirichlet BC imposed
+                 (see Hoffmann Vol. 1, pg 172, 183).
+
+    Returns
+    -------
+
+    U : 2D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    import numpy as np
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-               HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
+    import fluid.tridiagonal as trid
 
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    Uhalf = pre.Initial (iMax, jMax) # Uhalf is U at time level (n + 1/2)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    Uhalf = pre.BC(Uhalf, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    ijMax = max(iMax, jMax)
-    H = np.zeros(ijMax)
-    G = np.zeros(ijMax)
-    
-    Beta = dX/dY
-    B2 = Beta**2.0
-    n = 0
+    shapeU = Uo.shape # Obtain Dimension
+    if len(shapeU) == 1:
+        raise Exception("ERROR: Elliptic solvers are generally used to\
+ solve 2D Poisson's or Laplace's equation.")
+    # Proceed to numerical solution
+    Uhalf = Uo.copy() # Uhalf is U at time level (n + 1/2)
+    U = Uo.copy() # Initialize U
+    Beta = init.dX/init.dY
+    B2 = Beta*Beta
 
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
+    #**********************************************************************
+    # This block of codes solves for U
+    # at time level n + 1/2 (i.e. = Uhalf) along constant j line
+    # Eq. 5.24 using Tridiagonal system Appendix B in
+    # Hoffmann CFD Vol.1
+    #**********************************************************************
+    A = [RelaxParam for i in range (init.iMax)]
+    B = [-2.0*(1.0 + B2) for i in range (init.iMax)]
+    C = [RelaxParam for i in range (init.iMax)]
+    D = [0 for i in range (init.iMax)]
+    UU = [0 for i in range (init.iMax)]
+    for j in range (1, init.jMax-1):
+        UU[0] = U[0][j] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[init.iMax-1][j]
+        for i in range (1, init.iMax-1):
+            D[i] = (1.0 - RelaxParam)*B[i]*U[i][j] -\
+                    RelaxParam*B2*(U[i][j+1] + Uhalf[i][j-1])
+        # Alternating Direction Implicit SOR method in x-direction
+        UU = trid.TridiagonalSolver(init.iMax,A,B,C,D,UU)
+        for i in range (1, init.iMax-1):
+            Uhalf[i][j] = UU[i]
 
-        #***********************************************************************
-        # This block of codes solves for U at time level n + 1/2 (i.e. = Uhalf) 
-        # along constant j line 
-        # Eq. 5.24 using Tridiagonal system Appendix B in Hoffmann CFD Vol.1
-        #***********************************************************************
-        A = RelaxParam
-        B = -2.0*(1 + B2)
-        C = RelaxParam
-        for j in range (1, jMax-1):
-            H[0] = 0.0
-            G[0] = U[0][j]
-            for i in range (1, iMax-1):
-                H[i] = C/(B - A*H[i-1])
-                D = (1 - RelaxParam)*B*U[i][j] - RelaxParam*B2*(U[i][j+1] + Uhalf[i][j-1])
-                G[i] = (D - A*G[i-1])/(B - A*H[i-1])
-            for i in range (iMax-2,0,-1):
-                Uhalf[i][j] = -H[i]*Uhalf[i+1][j] + G[i] # Alternating Direction Implicit SOR method in x-direction
-                
-        Uhalf = pre.BC(Uhalf, iMax, jMax, BCType) # Update boundary conditions for Uhalf
-        
-        #***********************************************************************
-        # This block of codes solves for U at time level n + 1  
-        # along constant i line
-        # Eq. 5.25 using Tridiagonal system Appendix B in Hoffmann CFD Vol.1
-        #***********************************************************************
-        A = RelaxParam*B2
-        B = -2.0*(1 + B2)
-        C = RelaxParam*B2
-        for i in range (1, iMax-1):
-            H[0] = 0.0
-            G[0] = U[i][0]
-            for j in range (1, jMax-1):
-                H[j] = C/(B - A*H[j-1])
-                D = (1 - RelaxParam)*B*Uhalf[i][j] - RelaxParam*(Uhalf[i+1][j] + U[i-1][j])
-                G[j] = (D - A*G[j-1])/(B - A*H[j-1]) 
-            for j in range (jMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[j]*U[i][j+1] + G[j] # Alternating Direction Implicit SOR method in y-direction
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-   
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit SOR method with\nRelaxation Parameter = {RelaxParam} '
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+    #**********************************************************************
+    # This block of codes solves for U at time level n + 1
+    # along constant i line
+    # Eq. 5.25 using Tridiagonal system Appendix B in
+    # Hoffmann CFD Vol.1
+    #**********************************************************************
+    A = [RelaxParam*B2 for j in range (init.jMax)]
+    B = [-2.0*(1.0 + B2) for j in range (init.jMax)]
+    C = [RelaxParam*B2 for j in range (init.jMax)]
+    D = [0 for j in range (init.jMax)]
+    UU = [0 for j in range (init.jMax)]
+    for i in range (1, init.iMax-1):
+        UU[0] = U[i][0] # Convert Uo to 1-D array for Tridiagonal solver
+        UU[-1] = U[i][init.jMax-1]
+        for j in range (1, init.jMax-1):
+            D[j] = (1.0 - RelaxParam)*B[j]*Uhalf[i][j] -\
+                    RelaxParam*(Uhalf[i+1][j] + U[i-1][j])
+        # Alternating Direction Implicit SOR method in y-direction
+        UU = trid.TridiagonalSolver(init.jMax,A,B,C,D,UU)
+        for j in range (1, init.jMax-1):
+            U[i][j] = UU[j]
 
     return U
 
-#*******************************************************************************
+#**************************************************************************

@@ -1,376 +1,402 @@
-# coding: utf-8
-import numpy as np
-import preprocess as pre
-import postprocess as post
-import readuserinputs as ri
+'''
++**************************************************************************
++**************************************************************************
++
++   FILE         parabolicsolvers.py
++
++   AUTHOR       Vishal Sharma
++
++   VERSION      1.0.0.dev1
++
++   WEBSITE      https://vxsharma-14.github.io/NAnPack/
++
++   NAnPack Learner's Edition is distributed under the MIT License.
++
++   Copyright (c) 2020 Vishal Sharma
++
++   Permission is hereby granted, free of charge, to any person
++   obtaining a copy of this software and associated documentation
++   files (the "Software"), to deal in the Software without restriction,
++   including without limitation the rights to use, copy, modify, merge,
++   publish, distribute, sublicense, and/or sell copies of the Software,
++   and to permit persons to whom the Software is furnished to do so,
++   subject to the following conditions:
++
++   The above copyright notice and this permission notice shall be
++   included in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++   SOFTWARE.
++
++   You should have received a copy of the MIT License along with
++   NAnPack Learner's Edition.
++
++**************************************************************************
++**************************************************************************
+'''
+#**************************************************************************
+def FTCS(Uo, diffX, diffY=None):
+    '''Solve a 1D or a 2D diffusion equation using the explicit Forward
+    Time/Central Space method.
 
-#*******************************************************************************
-def FTCS(InputSettings, StateOpt=1, totTime=360.0, BCType='Dirichlet'):
-    '''Solve a 2D linear parabolic partial differential equation using the
-       explicit Forward Time/Central Space method.
-       
-       Equation solved: UNSTEADY HEAT CONDUCTION EQUATION
-    
+    The diffusion equation is a parabolic partial differential equation.
+    A typical example of a diffusion equation is the unsteady heat
+    conduction equation, which is expressed as:
+
+                            du/dt = alpha(d2u/dx2)
+    where,
+                u: measurable quanity
+            alpha: a constant physical coefficient
+
     Call signature:
 
-        FTCS(InputSettings, BCType)
+        FTCS(Uo, diffX, diffY)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    Uo : 1D or 2D array (depending on the domain dimensions)
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-                   HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+         The dependent variable from time level (n) within the domain.
+
+    diffX : float
+
+            Diffusion number for x-component of the parabolic/diffusion
+            equation.
+
+    diffY : float, Default=None for 1-D applications
+
+            Diffusion number for y-component of the parabolic/diffusion
+            equation.
+
+    Returns
+    -------
+
+    U : 1D or 2D array (depending on the domain dimensions)
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
+    shapeU = Uo.shape # Obtain Dimension
+    U = Uo.copy() # Initialize U
 
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-    HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    # Read CFL number and diffusion coefficient from file.
-    CFL, diff = ri.Coefficients()
+    if len(shapeU) == 1:
+        U[1:-1] = Uo[1:-1]\
+                  + diffX*(Uo[2:] - 2.0*Uo[1:-1] + Uo[0:-2])
 
-    # Calculate step sizes.
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
+    elif len(shapeU) == 2:
+        U[1:-1,1:-1] = Uo[1:-1,1:-1]\
+                       + diffX*(Uo[2:,1:-1] - 2.0*Uo[1:-1,1:-1] +\
+                                Uo[0:-2,1:-1])\
+                       + diffY*(Uo[1:-1,2:] - 2.0*Uo[1:-1,1:-1] +\
+                                Uo[1:-1,0:-2])
 
-    # Initialize fields everywhere at t = 0.
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions.
-    U = pre.BC(U, iMax, jMax, BCType)
-    
-    # Calculate time step from CFL number, alpha and grid step.
-    dT = CFL*(1.0/((1/dX**2) + (1/dY**2)))/diff
-    
-    diffX = diff*dT/dX**2 # diffusion number for x term.
-    diffY = diff*dT/dY**2 # diffusion number for y term.
-
-    # Calculate number of time steps, transient solution is desired.
-    if StateOpt == 2:
-        nMax = int(totTime/dT) + 1
-
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        Uold = U.copy()
-        
-        U[1:-1,1:-1] = U[1:-1,1:-1]\
-                       + diffX*(U[2:,1:-1] - 2*U[1:-1,1:-1] + U[0:-2,1:-1])\
-                       + diffY*(U[1:-1,2:] - 2*U[1:-1,1:-1] + U[1:-1,0:-2]) # FTCS method
-        Error = abs(Uold[1:-1,1:-1] - U[1:-1,1:-1]).sum() # absolute error
-        
-        # L-inf norm error calculation
-        
-        #Abs_err = abs(Uold[1:,1:] - U[1:,1:]).sum(axis=1)
-        #Error = max(Abs_err)
-   
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Forward Time/Central Spacing method.'
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-    
     return U
 
-#*******************************************************************************
-def DuFortFrankel(InputSettings, StateOpt=1, totTime=360.0, BCType='Dirichlet'):
-    '''Solve a 2D linear parabolic partial differential equation using the
-       explicit DuFort-Frankel method.
-       
-       Equation solved: UNSTEADY HEAT CONDUCTION EQUATION
+#**************************************************************************
+def DuFortFrankel(Uo, Uo2, diffX, diffY=None):
+    '''Solve a 1D or a 2D diffusion equation using the explicit
+    DuFort-Frankel method.
+
+    The diffusion equation is a parabolic partial differential equation.
+    A typical example of a diffusion equation is the unsteady heat
+    conduction equation, which is expressed as:
+
+                            du/dt = alpha(d2u/dx2)
+    where,
+                u: measurable quanity
+            alpha: a constant physical coefficient
     
     Call signature:
 
-        DuFortFrankel(InputSettings, BCType)
+        DuFortFrankel(Uo, Uo2, diffX, diffY)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    Uo : 1D or 2D array (depending on the domain dimensions)
 
-                   This tuple is unpacked as
-                   ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-                   HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+         The dependent variable from time level (n) within the domain.
+
+    Uo2 : 1D or 2D array
+
+          The dependent variable at time level (n-1).
+
+    diffX : float
+
+            Diffusion number for x-component of the parabolic/diffusion
+            equation.
+
+    diffY : float, Default=None for 1-D applications
+
+            Diffusion number for y-component of the parabolic/diffusion
+            equation.
+
+    Returns
+    -------
+
+    U : 1D or 2D array (depending on the domain dimensions)
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    from globalmod import iMax, jMax, Length, Height
-    
-    ExpNumber, ConvCriteria, nMax, nWrite, OutFileName, nDisplay,\
-    HistFileName, FrameOpt, FrameWrite = InputSettings
-    
-    # Read CFL number and diffusion coefficient from file.
-    CFL, diff = ri.Coefficients()
+    shapeU = Uo.shape # Obtain Dimension
+    U = Uo.copy() # Initialize U
 
-    # Calculate step sizes.
-    dX = Length/(iMax - 1)
-    dY = Height/(jMax - 1)
+    if len(shapeU) == 1:
+        U[1:-1] = ((1.0 - 2.0*diffX)*Uo2[1:-1]\
+               + 2.0*diffX*(Uo[2:] + Uo[0:-2]))/(1.0 + 2.0*diffX)
 
-    # Initialize fields everywhere at t = 0.
-    U = pre.Initial(iMax, jMax)
-    
-    # Assign boundary conditions.
-    U = pre.BC(U, iMax, jMax, BCType)
-    Uold = U.copy()
-    
-    # Calculate time step from CFL number, alpha and grid step.
-    dT = CFL*(1.0/((1/dX**2) + (1/dY**2)))/diff
-    
-    diffX = diff*dT/dX**2 # diffusion number for x term.
-    diffY = diff*dT/dY**2 # diffusion number for y term.
-    
-    # Calculate number of time steps, transient solution is desired.
-    if StateOpt == 2:
-        nMax = int(totTime/dT) + 1
+    elif len(shapeU) == 2:
+        U[1:-1,1:-1] = ((1.0 - 2.0*diffX - 2.0*diffY)*Uo2[1:-1,1:-1]\
+                        + 2.0*diffX*(Uo[2:,1:-1] + Uo[0:-2,1:-1])\
+                        + 2.0*diffY*(Uo[1:-1,2:] + Uo[1:-1,0:-2]))\
+                        /(1.0 + 2.0*diffX + 2.0*diffY)
 
-    n = 0
-
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        Uold2 = Uold.copy()
-        Uold  = U.copy()
-        
-        if n == 1: # Determine U using FTCS method at n = 1 using n = 0
-            U[1:-1,1:-1] = U[1:-1,1:-1]\
-                           + diffX*(U[2:,1:-1] - 2*U[1:-1,1:-1] + U[0:-2,1:-1])\
-                           + diffY*(U[1:-1,2:] - 2*U[1:-1,1:-1] + U[1:-1,0:-2])
-        
-        U[1:-1,1:-1] = ((1.0 - 2*diffX - 2*diffY)*Uold2[1:-1,1:-1]\
-                       + 2*diffX*(U[2:,1:-1] + U[0:-2,1:-1])\
-                       + 2*diffY*(U[1:-1,2:] + U[1:-1,0:-2]))\
-                       / (1 + 2*diffX + 2*diffY) # DuFort-Frankel method
-        
-        Error = abs(Uold[1:-1,1:-1] - U[1:-1,1:-1]).sum() # absolute error
-        
-        
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
-
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations."
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using explicit DuFort-Frankel method.'
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-    
     return U
 
-#*******************************************************************************
-def ADI(InputSettings, BCType='Dirichlet'):
-    '''Solve a 2D linear parabolic partial differential equation using the
-       implicit Alternating Direction Implicit method.
-       
-       Equation solved: UNSTEADY HEAT CONDUCTION EQUATION
-    
+#**************************************************************************
+def Laasonen(init, Uo, diffX):
+    '''Solve a 1D diffusion equation using the implicit Laasonen method.
+    Note: Use only for 1D applications as this implicit formulation is not
+    efficient for 2D. Use function ADI() instead for 2D implicit method.
+
+    The diffusion equation is a parabolic partial differential equation.
+    A typical example of a diffusion equation is the unsteady heat
+    conduction equation, which is expressed as:
+
+                            du/dt = alpha(d2u/dx2)
+    where,
+                u: measurable quanity
+            alpha: a constant physical coefficient
+
     Call signature:
 
-        ADI(InputSettings, BCType)
+        Laasonen(init, Uo, diffX)
 
     Parameters
-    __________
+    ----------
 
-    InputSettings: list
-                   
-                   The inputs are packed in this list. This is designed to be
-                   obtained from function "preprocess.InputSettings(InFileName)"
-                   packed into a tuple.
+    init :
 
-                   This tuple is unpacked as
-                   ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
-                   nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-                   FrameWrite = InputSettings
-    
-    BCType: {'Dirichlet', 'Neumann', 'Mixed'}, default: 'Dirichlet'
-            
-            Boundary conditions type for the simulation. Defaults to 'Dirichlet'.
-            Possible values:
-            'Dirichlet': Dirichlet Boundary Conditions
-            'Neumann': Neumann Boundary Conditions
-            'Mixed': Mixed-type Boundary Conditions
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    diffX : float
+
+            Diffusion number for x-component of the parabolic/diffusion
+            equation.
+
+    Returns
+    -------
+
+    U : 1D
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
     '''
-    
-    ExpNumber, iMax, jMax, L, H, ConvCriteria, nMax,\
-            nWrite, OutFileName, nDisplay, HistFileName, FrameOpt,\
-            FrameWrite = InputSettings
-    
-    # Read CFL number and diffusion coefficient from file
-    CFL, diff = ri.Coefficients()
+    import fluid.tridiagonal as tri
 
-    dX = L/(iMax - 1)
-    dY = H/(jMax - 1)
+    shapeU = Uo.shape # Obtain Dimension
 
-    # Initialize fields everywhere at t = 0
-    U = pre.Initial(iMax, jMax)
-    Uhalf = pre.Initial(iMax, jMax) # Uhalf is U at time level (n + 1/2)
-    
-    # Assign boundary conditions 
-    U = pre.BC(U, iMax, jMax, BCType)
-    Uold = U.copy()
-    Uhalf = pre.BC(Uhalf, iMax, jMax, BCType)
-    
-    # Initialize coefficient H and G arrays for solution of
-    # tridiagonal system of equations
-    ijMax = max(iMax, jMax)
-    H = np.zeros(ijMax)
-    G = np.zeros(ijMax)
-    
-    # Calculate time step from CFL number, alpha and grid step.
-    dT = CFL*((1/dX**2) + 1/(dY**2))/diff
-    
-    diffX = diff*dT/dX**2 # diffusion number for x term
-    diffY = diff*dT/dY**2 # diffusion number for y term
-    
+    if len(shapeU) == 2:
+        raise Exception('ERROR: CRANK-NICOLSON METHOD IS INEFFICIENT for\
+ 2D applications.\nTry using 1D or use Alternating Direction Implicit\
+ method of 2D.')
+    U = Uo.copy() # Initialize U
+    A = [-diffX for i in range (init.iMax)]
+    B = [1.0 + 2.0*diffX for i in range (init.iMax)]
+    C = [-diffX for i in range (init.iMax)]
+    D = U
+    UU = Uo.copy()
+
+    U = tri.TridiagonalSolver(init.iMax, A, B, C, D, UU)
+
+    return U
+
+#**************************************************************************
+def CrankNicolson(init, Uo, diffX):
+    '''Solve a 1D diffusion equation using the implicit Crank-Nicolson
+    method.
+    Note: Use only for 1D applications as this implicit formulation is not
+    efficient for 2D. Use function ADI() instead for 2D implicit method.
+
+    The diffusion equation is a parabolic partial differential equation.
+    A typical example of a diffusion equation is the unsteady heat
+    conduction equation, which is expressed in 1D as:
+
+                            du/dt = alpha(d2u/dx2)
+    where,
+                u: measurable quanity
+            alpha: a constant physical coefficient
+
+    Call signature:
+
+        CrankNicolson(init, Uo, diffX)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    Uo : 1D array
+
+         The dependent variable from time level (n) within the domain.
+
+    diffX : float
+
+            Diffusion number for x-component of the parabolic/diffusion
+            equation.
+
+    Returns
+    -------
+
+    U : 1D array
+
+        The dependent variable calculated at time level (n+1) within the
+        entire domain.
+    '''
+    import fluid.tridiagonal as tri
+
+    shapeU = Uo.shape # Obtain Dimension
+
+    if len(shapeU) == 2:
+        raise Exception('ERROR: CRANK-NICOLSON METHOD IS INEFFICIENT for\
+ 2D applications.\nTry using 1D or use Alterrnating Direction Implicit\
+ method of 2D.')
+    U = Uo.copy() # Initialize U
+    dd = 0.5*diffX
+    A = [-dd for i in range (init.iMax)]
+    B = [(1.0 + 2.0*dd) for i in range (init.iMax)]
+    C = [-dd for i in range (init.iMax)]
+    D = [ 0 for i in range (init.iMax)]
+    D[1:-1] = dd*Uo[2:] + (1.0 - 2.0*dd)*Uo[1:-1] + dd*Uo[0:-2]
+    UU = Uo.copy()
+
+    U = tri.TridiagonalSolver(init.iMax, A, B, C, D, UU)
+
+    return U
+
+#**************************************************************************
+def ADI(init, Uo, diffX, diffY):
+    '''Solve a 2D diffusion equation using the implicit Alternating
+    Direction Implicit method.
+    Note: This formulation solves only 2D model equation.
+
+    The diffusion equation is a parabolic partial differential equation.
+    A typical example of a diffusion equation is the unsteady heat
+    conduction equation, which is expressed as:
+
+                            du/dt = alpha(d2u/dx2)
+    where,
+                u: measurable quanity
+            alpha: a constant physical coefficient
+
+    Call signature:
+
+        ADI(init, Uo, diffX, diffY)
+
+    Parameters
+    ----------
+
+    init :
+
+           Class object of RunConfig class which was created at the
+           beginning of the simulation.
+
+    U : 2D array
+
+        The dependent variable from time level (n) within the domain.
+
+    diffX : float
+
+            Diffusion number for x-component of the parabolic/diffusion
+            equation.
+
+    diffY : float
+
+            Diffusion number for y-component of the parabolic/diffusion
+            equation.
+
+    Returns
+    -------
+
+    Uo : 2D array
+
+         The dependent variable calculated at time level (n+1) within the
+         entire domain.
+    '''
+    import fluid.tridiagonal as tri
+
+    shapeU = Uo.shape # Obtain Dimension
+
+    if len(shapeU) == 1:
+        raise Exception('ERROR: ALTERNATING DIRECTION IMPLICIT METHOD\
+ is used for 2D configurations only.')
+
+    U = Uo.copy() # Initialize U
+    Uhalf = Uo.copy() # Uhalf is U at time level (n + 1/2)
+
     d1 = 0.5*diffX
     d2 = 0.5*diffY
 
-    # Calculate number of time steps, transient solution is desired.
-    if StateOpt == 2:
-        nMax = int(totTime/dT) + 1
+    #******************************************************************
+    # This block of codes solves for U
+    # at time level n + 1/2 (i.e. = Uhalf) along constant j line
+    # Eq. 5.24 using Tridiagonal system Appendix B in
+    # Hoffmann CFD Vol.1
+    #******************************************************************
+    A = [-d1 for i in range (init.iMax)]
+    B = [(1.0 + 2.0*d1) for i in range(init.iMax)]
+    C = [-d1 for i in range (init.iMax)]
+    D = [0 for i in range (init.iMax)]
+    UU = [0 for i in range (init.iMax)]
+    for j in range (1, init.jMax-1):
+        UU[0] = Uo[0][j]
+        UU[-1] = Uo[init.iMax-1][j]
+        for i in range (1, init.iMax-1):
+            D[i] = d2*Uo[i][j+1] + (1.0 - 2.0*d2)*Uo[i][j] +\
+                   d2*Uo[i][j-1]
+        UU = tri.TridiagonalSolver(init.iMax,A,B,C,D,UU)
+        for i in range (1,init.iMax-1):
+            # Alternating Direction Implicit method in x-direction
+            Uhalf[i][j] = UU[i]
 
-    n = 0
+    #******************************************************************
+    # This block of codes solves for U at time level n + 1
+    # along constant i line
+    # Eq. 5.25 using Tridiagonal system Appendix B in
+    # Hoffmann CFD Vol.1
+    #******************************************************************
+    A = [-d2 for j in range (init.jMax)]
+    B = [(1.0 + 2.0*d2) for j in range (init.jMax)]
+    C = [-d2 for j in range (init.jMax)]
+    D = [0 for j in range (init.jMax)]
+    UU = [0 for j in range (init.jMax)]
+    for i in range (1, init.iMax-1):
+        UU[0] = Uo[i][0]
+        UU[-1] = Uo[i][init.jMax-1]
+        for j in range (1, init.jMax-1):
+            D[j] = d1*Uhalf[i+1][j] + (1.0 - 2.0*d1)*Uhalf[i][j] +\
+                   d1*Uhalf[i-1][j]
+        UU = tri.TridiagonalSolver(init.jMax,A,B,C,D,UU)
+        for j in range (1,init.jMax-1):
+            # Alternating Direction Implicit method in y-direction
+            U[i][j] = UU[j]
 
-    Error = 1.0
-    print(f'{"ITER":>7} {"ERROR":>15}')
-    print(f'{"----":>7} {"-----":>15}')
-    print()
-    while Error > ConvCriteria and n < nMax: # Start iteration
-        Error = 0.0
-        n = n + 1
-        
-        #***********************************************************************
-        # This block of codes solves for U at time level n + 1/2 (i.e. = Uhalf) 
-        # along constant j line 
-        # Eq. 5.24 using Tridiagonal system Appendix B in Hoffmann CFD Vol.1
-        #***********************************************************************
-        A = -d1
-        B = 1 + 2*d1
-        C = -d1
-        for j in range (1, jMax-1):
-            H[0] = 0.0
-            G[0] = U[0][j]
-            for i in range (1, iMax-1):
-                H[i] = C/(B - A*H[i-1])
-                D = d2*U[i][j+1] + (1 - 2*d2)*U[i][j] + d2*U[i][j-1]
-                G[i] = (D - A*G[i-1])/(B - A*H[i-1])
-            for i in range (iMax-2,0,-1):
-                Uhalf[i][j] = -H[i]*Uhalf[i+1][j] + G[i] # Alternating Direction Implicit SOR method in x-direction
-                
-        Uhalf = pre.BC(Uhalf, iMax, jMax, BCType) # Update boundary conditions for Uhalf
-        
-        #***********************************************************************
-        # This block of codes solves for U at time level n + 1  
-        # along constant i line
-        # Eq. 5.25 using Tridiagonal system Appendix B in Hoffmann CFD Vol.1
-        #***********************************************************************
-        A = -d2
-        B = 1 + 2*d2
-        C = -d2
-        for i in range (1, iMax-1):
-            H[0] = 0.0
-            G[0] = U[i][0]
-            for j in range (1, jMax-1):
-                H[j] = C/(B - A*H[j-1])
-                D = d1*Uhalf[i+1][j] + (1 - 2*d1)*Uhalf[i][j] + d1*Uhalf[i-1][j]
-                G[j] = (D - A*G[j-1])/(B - A*H[j-1]) 
-            for j in range (jMax-2,0,-1):
-                Uold = U[i][j]
-                U[i][j] = -H[j]*U[i][j+1] + G[j] # Alternating Direction Implicit SOR method in y-direction
-                Error = Error + abs(Uold - U[i][j]) # Calculate error
-        
-        
-        post.WriteConvHistToFile(HistFileName, n, Error) # Write convergence history log to a file
-        
-        U = pre.BC(U, iMax, jMax, BCType) # Update boundary conditions
-        
-        if n % nDisplay == 0: # Display convergence monitors
-            print(f'{n:>7} {Error:>15.8f}')
+    return U
 
-        # Write output to files
-        if n % nWrite == 0:
-            post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
-            
-    flag = 'YES' # Flag to write end of file convergence report 
-    if n == nMax:
-        msg = f"Solution didn't converge in {nMax} iterations"
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-    else:
-        msg = f'Solution Converged in {n} Iterations with a Maximum Error of\n{ConvCriteria}\
- using Alternating Direction Implicit method'
-        print(msg)
-        post.WriteConvHistToFile(HistFileName, n, Error, WriteFlag=flag, PrintMsg=msg)
-
-    # Write output to files
-    post.WriteSolutionToFile(OutFileName, iMax, jMax, dX, dY, U)
+#**************************************************************************
