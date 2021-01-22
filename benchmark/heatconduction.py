@@ -10,7 +10,7 @@
 +
 +   WEBSITE      https://vxsharma-14.github.io/NAnPack/
 +
-+   AnPack Learners Edition is distributed under the MIT License.
++   NAnPack Learner's Edition is distributed under the MIT License.
 +
 +   Copyright (c) 2020 Vishal Sharma
 +
@@ -35,7 +35,7 @@
 +   SOFTWARE.
 +
 +   You should have received a copy of the MIT License along with
-+   NAnPack Learners Edition.
++   NAnPack Learner's Edition.
 +
 +**************************************************************************
 +**************************************************************************
