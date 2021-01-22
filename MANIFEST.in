@@ -1,0 +1,14 @@
+#include pyproject.toml
+
+# Include the README
+include *.md
+
+# Include the license file
+include LICENSE.md
+
+# Include the data files
+#recursive-include data *
+
+# Include the configuration files for the simulation
+include D:\\MyProjects\\FluiDynPy\\Project_NAnPack\\input\\config.ini
+include D:\\MyProjects\\FluiDynPy\\Project_NAnPack\\input\\bc.ini
