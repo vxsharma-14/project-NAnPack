@@ -53,4 +53,4 @@ You can learn how from [How to Contribute to an Open Source Project on GitHub](h
 
 Thanks,
 
-NAnPack Team
+Vishal Sharma
