@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-name='NumAnPack-Learners-Edition',
+name="NAnPack-Learner's-Edition",
 version='1.0.0.dev1',
 author='Vishal Sharma',
 author_email='sharma_vishal14@hotmail.com',
