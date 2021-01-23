@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-name="NAnPack-Learner's-Edition",
+name='NAnPack-Learners-Edition',
 version='1.0.0.dev1',
 author='Vishal Sharma',
 author_email='sharma_vishal14@hotmail.com',
@@ -10,7 +10,7 @@ license='LICENSE.md',
 description='A package for simulating physical processes.',
 long_description=open('README.md').read(),
 long_description_content_type='text/markdown',
-packages=setuptools.find_packages(),
+package_dir = {'':'Project_NAnPack'},
 python_requires='>=3.7',
 classifiers=[
     'Development Status :: 3 - Alpha',
