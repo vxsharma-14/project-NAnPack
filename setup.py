@@ -10,7 +10,7 @@ license='LICENSE.md',
 description='A package for simulating physical processes.',
 long_description=open('README.md').read(),
 long_description_content_type='text/markdown',
-packages=setuptools.find_packages(),
+package_dir = {'':'Project_NAnPack'},
 python_requires='>=3.7',
 classifiers=[
     'Development Status :: 3 - Alpha',
