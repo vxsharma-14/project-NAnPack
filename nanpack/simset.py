@@ -183,7 +183,7 @@ class RunConfig:
 
             RunConfig.Initial()
         '''
-        import nanpack.initialize as init
+        import nanpack.backend.initialize as init
         #*********** INITIAL CONDITIONS *************
         self.StartOpt = self.config['IC']['START_OPT']
         if self.StartOpt.upper() == 'RESTART':
@@ -237,11 +237,11 @@ class RunConfig:
         self.BCFileName = self.config['BC']['BC_FILE_NAME']
         print('Accessing boundary condition settings: Completed')
         if self.BCfromFile.upper() == 'YES':
-            BC = bound.ReadBCfromFile(self.BCFileName)
+            self.BC = bound.ReadBCfromFile(self.BCFileName)
             # Call function to assign 2D BC
-            self.U = bound.BC2D(self.U, BC, self.dX, self.dY)
+            self.U = bound.BC2D(self.U, self.BC, self.dX, self.dY)
+            print('Boundary conditions assignment: Completed.')
         elif self.BCfromFile.upper() == 'NO':
-            print('Follow the instructions in the documentation.')
             self.U = self.U
 
         return self.U
@@ -268,7 +268,7 @@ class RunConfig:
 
             RunConfig.ConfigSimStop()
         '''
-        import nanpack.timeconstants as time
+        import nanpack.grid as grid
         #*********** SIM STOP SETTINGS ***********
         self.totTime = float(self.config['STOP']['SIM_TIME'])
         if self.State.upper() == 'STEADY':
@@ -279,10 +279,10 @@ class RunConfig:
         # Execute this block for:
         # diffusion eq., first-order wave eq. and Burgers eq.
         if not self.Model.upper() == 'POISSONS':
-            self.dT = time.CalcTimeStep(self.CFL, self.diff, self.conv,\
+            self.dT = grid.CalcTimeStep(self.CFL, self.diff, self.conv,\
                                         self.dX, self.dY,\
                                         self.Dimension, self.Model)
-            self.nMax = time.CalcMaxSteps(self.State, nMax, self.dT,\
+            self.nMax = grid.CalcMaxSteps(self.State, nMax, self.dT,\
                                           self.totTime)
         # Execute this block for Poissons eq.
         elif self.Model.upper() == 'POISSONS':
