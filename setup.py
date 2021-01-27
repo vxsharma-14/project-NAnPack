@@ -1,15 +1,16 @@
 from setuptools import setup
 
 setup(
-name='NAnPack-Learners-Edition',
-version='1.0.0.dev1',
+name='NAnPack',
+version='1.0.0-alpha1',
 author='Vishal Sharma',
 author_email='sharma_vishal14@hotmail.com',
 url='https://github.com/vxsharma-14/NAnPack',
 license='LICENSE.md',
-description='A package for simulating physical processes.',
+description='A package for learning numerical methods.',
 long_description=open('README.md').read(),
 long_description_content_type='text/markdown',
+include_package_data=True,
 #package_dir = {'':'nanpack'},
 python_requires='>=3.7',
 classifiers=[
@@ -20,5 +21,5 @@ classifiers=[
     'Topic :: Scientific/Engineering',
 ],
 keywords='numerical methods ' 'computational engineering '\
-'computational fluid dynamics ' 'numerical simulation',
+'computational fluid dynamics ' 'scientific computing',
 )
