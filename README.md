@@ -15,7 +15,7 @@ Thank you for visiting this page. I hope that together we will make NAnPack a gr
 
 
 ## Installation
-For installation instructions, visit [NSTALLATION](INSTALLATION.md) page.
+For installation instructions, visit [INSTALLATION](INSTALLATION.md) page.
 
 ## Usage
 The NAnPack Learners edition is intended to be used for the purpose of teaching and learning various numerical schemes for solving partial differential equations in engineering and science.
