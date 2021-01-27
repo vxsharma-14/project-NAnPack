@@ -61,6 +61,6 @@ def InitialCondition(Dimension, iMax, jMax=None):
 #def init():
 
 #**************************************************************************
-if __name__ == '__main__':
-    import sys
-    Initial()
+#if __name__ == '__main__':
+#    import sys
+#    Initial()
