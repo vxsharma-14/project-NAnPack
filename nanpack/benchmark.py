@@ -40,7 +40,7 @@
 +**************************************************************************
 +**************************************************************************
 '''
-def HeatConduction(cfg, T1, T2, T3, T4, Inf):
+def HeatConduction(X, Y, T1, T2, T3, T4, Inf):
     '''Obtain the analytical solution of the heat conduction within
        the rectangular domain. Use the results to validate the numerical
        solution of
@@ -100,7 +100,6 @@ def HeatConduction(cfg, T1, T2, T3, T4, Inf):
     import numpy as np
     import nanpack.writetofiles as write
     import math
-    import napack.grid as grid
 
     print('***********************************************************')
     print('                     ANALYTICAL SOLUTION')
@@ -108,16 +107,10 @@ def HeatConduction(cfg, T1, T2, T3, T4, Inf):
     print('Starting calculations to obtain analytical solution for the')
     print(f'{init.State.upper()} HEAT CONDUCTION PROBLEM.')
 
-    L = cfg.Length
-    W = cfg.Height
+    L = X[-1,0]
+    W = Y[0,-1]
 
-    iMax = cfg.iMax
-    jMax = cfg.jMax
-
-    
-    
-    # Calculate X and Y at all grid points
-    X, Y = grid.RectangularGrid(cfg.dX, iMax, cfg.dY, jMax)
+    iMax, jMax = X.shape # 
 
     Ta = np.zeros((iMax,jMax))
     Tb = np.zeros((iMax,jMax))
@@ -214,7 +207,31 @@ def HeatConduction(cfg, T1, T2, T3, T4, Inf):
     TAnaly[-1,-1] = T3 # At x=L, Y=H
 
     # Write to file   
-    write.WriteSolutionToFile(cfg, n=10, U=TAnaly, OutFileName)
+    write.WriteSolutionToFile(cfg, n=10, U=TAnaly, OutFileName=OutFileName)
     print('Calculating analytical solution: Completed.')
   
     return TAnaly
+
+#**************************************************************************
+def ViscousBurgersSolution(cfg, X, *args):
+    '''Return the analytical solution of a stationary Burgers equation.'''
+    import math
+
+    times = args
+    Uana = X.copy()
+    shapeX = X.shape
+    iMax, = shapeX
+    Xstar = X/18.0
+    
+
+    for t in times:
+        for i in range(0,iMax):
+            Uana[i] = -2.0*math.sinh(X[i]) / (math.cosh(X[i])\
+                                              - math.exp(-t))
+        file = (f'Analytical_n={t}.dat')
+        #write.WriteSolutionToFile(cfg, n=10, U=Uana, OutFileName=file)
+
+    print('Calculating analytical solution: Completed.')
+    return Uana
+
+#**************************************************************************

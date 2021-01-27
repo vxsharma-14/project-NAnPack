@@ -1,39 +1,19 @@
 #**************************************************************************
-def RectangularGrid(dX, iMax, dY=None, jMax=None):
-    '''Compute X and Y grid point locations in a rectangular, uniform
-    mesh in a cartesian coordinate system.
-    '''
-    print('Calculating X and Y locations of all grid points within\
- the mesh.')
-    
-    if isinstance(dY, float) and isinstance(jMax, int):
-        X = [[i*dX for j in range (0,jMax)] for i in range (0,iMax)] 
-        Y = [[j*dY for j in range (0,jMax)] for i in range (0,iMax)]
-    else:
-        X = [i*dX for i in range (0,iMax)]
-        Y = 0.0
-    print(f'Uniform rectangular grid generation in a cartesian\
- coordinate system: Completed.')
-
-    return X, Y
-
-#**************************************************************************
 def ComputeGridPoints(Dimension, Length, delX, Height=None, delY=None):
-    '''Compute grid points along X and Y direction in the mesh.
-    '''
+    '''Returns the grid points along X and Y direction in the mesh.'''
     iMax = int(Length/delX) + 1
     if Dimension.upper() == '2D':
         jMax = int(Height/delY) + 1
     else:
         jMax = 0
     print('Calculating grid size: Completed.')
-    
 
     return iMax, jMax
 
 #**************************************************************************
 def ComputeGridSteps(Dimension, Length, iMax, Height=None, jMax=None):
-    '''Compute uniform grid steps size along X and Y direction in the mesh.
+    '''Returns the uniform grid steps size along X and Y direction in the
+    mesh.
     '''
     delX = Length/(iMax - 1)
     if Dimension.upper() == '2D':
@@ -43,6 +23,63 @@ def ComputeGridSteps(Dimension, Length, iMax, Height=None, jMax=None):
     print('Calculating grid step size: Completed.')
 
     return delX, delY
+
+#**************************************************************************
+def RectangularGrid(dX, iMax, dY=None, jMax=None):
+    '''Returns X and Y grid point locations in a rectangular, uniform
+    mesh in a cartesian coordinate system.
+    '''
+    import numpy as np
+
+    if isinstance(dY, float) and isinstance(jMax, int):
+        X = np.zeros((iMax,jMax), dtype='float')
+        Y = np.zeros((iMax,jMax), dtype='float')
+        for i in range(0,iMax):
+            for j in range(0,jMax):
+                X[i][j] = i*dX
+                Y[i][j] = j*dY
+    else:
+        X = np.zeros((iMax), dtype='float')
+        for i in range(0,iMax):
+            X[i] = -9.0 + i*dX
+        Y = 0.0
+    print(f'Uniform rectangular grid generation in cartesian\
+ coordinate system: Completed.')
+
+    return X, Y
+
+#**************************************************************************
+def CurvilinearGrid(dX, iMax, dY=None, jMax=None):
+    '''Returns X and Y grid point locations in a rectangular, uniform or a
+    non-uniform mesh in a transformed coordinate system (Xi, Eta).
+    '''
+    print('Calculating X and Y locations of all grid points within\
+ the mesh.')
+    from .backend import gridmetrics
+    from .backend import plotmetrics
+    dXi = 1.0
+    dEta = 1.0
+
+    X, Y = RectangularGrid(dX, iMax, dY, jMax)
+    dim = X.shape
+
+    if len(dim) == 2: # Two dimensional
+        Xi = [[i*dXi for j in range(0,jMax)] for i in range(0,iMax)]
+        Eta = [[j*dEta for j in range (0,jMax)] for i in range (0,iMax)]
+        XiX, XiY, EtaX, EtaY, JJ = gridmetrics.Metrics2D(X, Y)
+        print('Grid metrics and Jacobian evaluation: Completed.')
+        plotmetrics.PlotMetrics2D(X, Y, XiX, XiY, EtaX, EtaY)
+
+    elif len(dim) == 1:
+        Xi = [i*dX for i in range(0,iMax)]
+        Eta = 0.0
+        Xi, JJ = gridmetrics.Metrics1D(X)
+        print('Grid metrics and Jacobian evaluation: Completed.')
+
+    print('Grid transformation to curvilinear coordinate system:\
+ Completed.')
+
+    return X, Y
 
 #**************************************************************************
 def CalcTimeStep(CFL, diff, conv, dX, dY, Dimension, Model):
