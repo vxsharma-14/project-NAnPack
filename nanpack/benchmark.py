@@ -6,7 +6,7 @@
 +
 +   AUTHOR       Vishal Sharma
 +
-+   VERSION      Learners Ed. 1.0.0dev1
++   VERSION      1.0.0-alpha2
 +
 +   WEBSITE      https://vxsharma-14.github.io/NAnPack/
 +
