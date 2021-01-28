@@ -2,16 +2,16 @@ from setuptools import setup
 
 setup(
 name='NAnPack',
-version='1.0.0-alpha1',
+version='1.0.0-alpha2',
 author='Vishal Sharma',
 author_email='sharma_vishal14@hotmail.com',
-url='https://github.com/vxsharma-14/NAnPack',
+url='https://github.com/vxsharma-14/project-NAnPack',
 license='LICENSE.md',
-description='A package for learning numerical methods.',
+description='A package of scientific computing tools for learning and teaching.',
 long_description=open('README.md').read(),
 long_description_content_type='text/markdown',
 include_package_data=True,
-#package_dir = {'':'nanpack'},
+package_dir = {'':'nanpack'},
 python_requires='>=3.7',
 classifiers=[
     'Development Status :: 3 - Alpha',
