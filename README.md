@@ -8,7 +8,7 @@ Thank you for visiting this page. I hope that together we will make NAnPack a gr
 
 # Version
 
-## 1.0.0-alpha2
+## 1.0.0-alpha3
 This package follows Semantic Versioning guidelines. The current version of this package is an alpha version (pre-release) and is currently being tested. Most probably it will not work as expected, however, please consider reporting issues to the repo owner. 
 
 # Table of Contents
