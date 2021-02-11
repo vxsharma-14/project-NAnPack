@@ -1,0 +1,190 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Installation (v1.0.0-alpha4) &#8212; NAnPack 1.0.0-alpha4 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Running Tests" href="running-tests.html" />
+    <link rel="prev" title="NAnPack Tutorials" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="running-tests.html" title="Running Tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="NAnPack Tutorials"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">NAnPack 1.0.0-alpha4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation (v1.0.0-alpha4)</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation-v1-0-0-alpha4">
+<h1>Installation (v1.0.0-alpha4)<a class="headerlink" href="#installation-v1-0-0-alpha4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="for-windows-os">
+<h2>For Windows OS<a class="headerlink" href="#for-windows-os" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="i-requirements">
+<h3>I. Requirements<a class="headerlink" href="#i-requirements" title="Permalink to this headline">¶</a></h3>
+<p>The package requires Python 3, which may be downloaded from the <a class="reference external" href="https://www.python.org/downloads/">Python homepage</a>. It comes with the integrated environment IDLE and Python Shell. The other popular development environment recommended for Python is <a class="reference external" href="https://jupyter.org/">Jupyter Notebook</a> which is also open-source.</p>
+</div>
+<div class="section" id="ii-approach-1-installing-nanpack-from-source">
+<h3>II. Approach 1 - Installing NAnPack from source<a class="headerlink" href="#ii-approach-1-installing-nanpack-from-source" title="Permalink to this headline">¶</a></h3>
+<p>One straightforward way of installing without having to use Git is downloading zip files from the GitHub repository.</p>
+<ol class="simple">
+<li><p>Visit GitHub project page, <a class="reference external" href="https://github.com/vxsharma-14/project-NAnPack">link here</a>.</p></li>
+<li><p>Download ZIP in the target directory <code class="docutils literal notranslate"><span class="pre">/path/to/myproject</span></code> and unzip the contents.</p></li>
+<li><p>On your terminal/command window, change the directory to the root of the unzipped NAnPack installation directory where “setup.py” is located <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">/path/to/myproject</span></code>.</p></li>
+<li><p>Install nanpack using the following command.<br /><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code></p></li>
+</ol>
+<p>This process will ensure that that you have downloaded the required configuration files located in the <code class="docutils literal notranslate"><span class="pre">./input/</span></code> folder.</p>
+</div>
+<div class="section" id="iii-approach-2-installing-nanpack-using-pip">
+<h3>III. Approach 2 - Installing NAnPack using PIP<a class="headerlink" href="#iii-approach-2-installing-nanpack-using-pip" title="Permalink to this headline">¶</a></h3>
+<p>NAnPack is uploaded on Python Package Index (PyPI) repository and thus it can be easily installed by entering the following on your terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">nanpack</span>
+</pre></div>
+</div>
+<p>To get the configuration files, you may have to dig into the directory where all python packages are installed and copy the input folder to the target directory for your projects.</p>
+<p>If you don’t have PIP installed, first read ‘Check PIP’ section and then continue from here.</p>
+</div>
+<div class="section" id="iv-check-installation">
+<h3>IV. Check Installation<a class="headerlink" href="#iv-check-installation" title="Permalink to this headline">¶</a></h3>
+<p>To check correct installation of the package, run the following tests on your command window/terminal</p>
+<ol class="simple">
+<li><p>Test nanpack installation - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">nanpack.tests.test_nanpackinstall</span></code></p></li>
+<li><p>Test required third-party packages - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">nanpack.tests.test_thirdpartyinstalls</span></code>. If this test fails, proceed to the section V.</p></li>
+<li><p>Run an example case to test everything is working - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">nanpack.tests.test_run</span></code>.</p></li>
+</ol>
+<p>The detailed outputs from these tests can be <a class="reference internal" href="running-tests.html"><span class="std std-ref">found here</span></a>.</p>
+<p><em>If Test#2 is passed, skip the below sections V and VI.</em></p>
+</div>
+<div class="section" id="v-installing-other-python-packages">
+<h3>V. Installing other Python packages<a class="headerlink" href="#v-installing-other-python-packages" title="Permalink to this headline">¶</a></h3>
+<p>Following are the required additional third-party packages to ensure correct functioning of NAnPack - NumPy and Matplotlib.</p>
+<p>Whether or not these packages are installed on your system can be checked by entering on the command window:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">show</span> <span class="o">&lt;</span><span class="n">package</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>If they are not already installed, type the following in the command window:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">numpy</span>  
+<span class="n">pip</span> <span class="n">install</span> <span class="n">matplotlib</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vi-check-pip">
+<h3>VI. Check PIP<a class="headerlink" href="#vi-check-pip" title="Permalink to this headline">¶</a></h3>
+<p>After you have downloaded the Python environment, we will use PIP to install packages/modules. PIP is the package manager for Python modules which is included by default with Python 3.4 or above. First check whether PIP is installed correctly by typing the following command in the command window and enter</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span><span class="o">&gt;</span><span class="n">pip</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+<p>The output should be similar to as shown below</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">pip</span> <span class="mf">20.2</span><span class="o">.</span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">c</span><span class="p">:</span>\<span class="n">users</span>\<span class="n">owner</span>\<span class="n">appdata</span>\<span class="n">local</span>\<span class="n">programs</span>\<span class="n">python</span>\<span class="n">python37</span><span class="o">-</span><span class="mi">32</span>\<span class="n">lib</span>\<span class="n">site</span><span class="o">-</span><span class="n">packages</span>\<span class="n">pip</span> <span class="p">(</span><span class="n">python</span> <span class="mf">3.7</span><span class="p">)</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>If it does not work, check that the Python directory is included in your system environment PATH variable or re-install Python or try installing PIP.</p>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation (v1.0.0-alpha4)</a><ul>
+<li><a class="reference internal" href="#for-windows-os">For Windows OS</a><ul>
+<li><a class="reference internal" href="#i-requirements">I. Requirements</a></li>
+<li><a class="reference internal" href="#ii-approach-1-installing-nanpack-from-source">II. Approach 1 - Installing NAnPack from source</a></li>
+<li><a class="reference internal" href="#iii-approach-2-installing-nanpack-using-pip">III. Approach 2 - Installing NAnPack using PIP</a></li>
+<li><a class="reference internal" href="#iv-check-installation">IV. Check Installation</a></li>
+<li><a class="reference internal" href="#v-installing-other-python-packages">V. Installing other Python packages</a></li>
+<li><a class="reference internal" href="#vi-check-pip">VI. Check PIP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">NAnPack Tutorials</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="running-tests.html"
+                        title="next chapter">Running Tests</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/INSTALLATION.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="running-tests.html" title="Running Tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="NAnPack Tutorials"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">NAnPack 1.0.0-alpha4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation (v1.0.0-alpha4)</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Dr. Vishal Sharma.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

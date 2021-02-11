@@ -1,0 +1,744 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial 3: Solving a 1D diffusion equation using all methods &#8212; NAnPack 1.0.0-alpha4 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Credits" href="../CREDITS.html" />
+    <link rel="prev" title="Tutorial 2. Solving a 1D diffusion equation" href="tutorial-02-diffusion-1D-solvers-FTCS.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../CREDITS.html" title="Credits"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial-02-diffusion-1D-solvers-FTCS.html" title="Tutorial 2. Solving a 1D diffusion equation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">NAnPack 1.0.0-alpha4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../links-to-examples.html" accesskey="U">Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Tutorial 3: Solving a 1D diffusion equation using all methods</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+
+<span></span><span class="c1"># Document Author: Dr. Vishal Sharma</span>
+<span class="c1"># Author email: sharma_vishal14@hotmail.com</span>
+<span class="c1"># License: MIT</span>
+<span class="c1"># This tutorial is applicable for NAnPack version 1.0.0-alpha4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Tutorial-3:-Solving-a-1D-diffusion-equation-using-all-methods">
+<h1>Tutorial 3: Solving a 1D diffusion equation using all methods<a class="headerlink" href="#Tutorial-3:-Solving-a-1D-diffusion-equation-using-all-methods" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="I.-Objectives">
+<h2>I. Objectives<a class="headerlink" href="#I.-Objectives" title="Permalink to this headline">¶</a></h2>
+<p>The objectives of this tutorial are two-fold: Firstly, inform users about the various available numerical methods for solving 1D diffusion equation and comparing the numerical solutions obtained from those methods, and Secondly, creating an automation script- that can run simulations using all available numerical method for 1D diffusion model so as to reduce user efforts that will go into writing multiple scripts. This automation example can be used as a reference for creating other automation
+scripts.</p>
+</div>
+<div class="section" id="II.-Case-Description">
+<h2>II. Case Description<a class="headerlink" href="#II.-Case-Description" title="Permalink to this headline">¶</a></h2>
+<p>We will use the same example which was presented in <a class="reference internal" href="tutorial-02-diffusion-1D-solvers-FTCS.html"><span class="doc">Tutorial 2</span></a>.</p>
+</div>
+<div class="section" id="III.-Numerical-Methods">
+<h2>III. Numerical Methods<a class="headerlink" href="#III.-Numerical-Methods" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Forward Time Central Spacing (FTCS) method</strong></p></li>
+</ol>
+<p>Brief description of this method is given in <a class="reference internal" href="tutorial-02-diffusion-1D-solvers-FTCS.html"><span class="doc">Tutorial 2</span></a>.</p>
+<p>Function call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nanpack</span><span class="o">.</span><span class="n">parabolicsolvers</span><span class="o">.</span><span class="n">FTCS</span><span class="p">(</span><span class="n">Uo</span><span class="p">,</span> <span class="n">diffX</span><span class="p">,</span> <span class="n">diffY</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>DuFort-Frankel method</strong></p></li>
+</ol>
+<p>This is an explicit method in which the time and space derivatives are discretized by second-order central differencing which is the same as in Richardson method, however, to make the scheme stable, the term <span class="math notranslate nohighlight">\(u_{i}^n\)</span> in the diffusion term is approximated by averaging over two time steps such that</p>
+<div class="math notranslate nohighlight">
+\[u_{i}^n = \frac{u_{i}^{n+1}+u_{i}^{n-1}}{2}\]</div>
+<p>Such modification makes the scheme unconditionally stable. After some modifications, the discretized equation is expressed as</p>
+<div class="math notranslate nohighlight">
+\[[1+2d_x]u_{i}^{n+1} = [1-2d_x]u_{i}^{n-1} + 2d_x[u_{i+1}^{n}+u_{i-1}^{n}]\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[d_x=\frac{\nu(\Delta t)}{(\Delta x)^2}\]</div>
+<p>As observed in the equation, values of the dependent variable at two time steps <em>n</em> and (<em>n</em>-1) is required, hence the storage requirements are increased. Also, the accuracy of the DuFort Frankel depends on the starter solution which depends on two sets of initial conditions. This method is second-order accurate in both space and time.</p>
+<p>Function call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nanpack</span><span class="o">.</span><span class="n">parabolicsolvers</span><span class="o">.</span><span class="n">DuFortFrankel</span><span class="p">(</span><span class="n">Uo</span><span class="p">,</span> <span class="n">Uold2</span><span class="p">,</span> <span class="n">diffX</span><span class="p">,</span> <span class="n">diffY</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Laasonen method</strong></p></li>
+</ol>
+<p>This is an implicit formulation which is expressed as</p>
+<div class="math notranslate nohighlight">
+\[Au_{i+1}^{n+1}+Bu_{i}^{n+1}+Cu_{i-1}^{n+1}=D\]</div>
+<p>where,</p>
+<div class="math notranslate nohighlight">
+\[A = -d_{x}\]</div>
+<div class="math notranslate nohighlight">
+\[B = 1+2d_{x}\]</div>
+<div class="math notranslate nohighlight">
+\[C = -d_{x}\]</div>
+<div class="math notranslate nohighlight">
+\[D = u_{i}^{n}\]</div>
+<div class="math notranslate nohighlight">
+\[d_x=\frac{\nu(\Delta t)}{(\Delta x)^2}\]</div>
+<p>The implicit schemes are unconditionally stable and therefore a larger time step can be used to minimize the simulation steps. The time step is, however, restricted due to other numerical errors such as truncation error.</p>
+<p>The discretized equation results in the set of linear algebraic equations. Subsequently, the algebraic equations are written in the matrix form that consists of a tridiagonal coefficient matrix. This formulation leads to larger computational time which can be somewhat compensated by using a larger time step.</p>
+<p>Function call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nanpack</span><span class="o">.</span><span class="n">parabolicsolvers</span><span class="o">.</span><span class="n">Laasonen</span><span class="p">(</span><span class="n">Uo</span><span class="p">,</span> <span class="n">diffX</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>Crank-Nicolson method</strong></p></li>
+</ol>
+<p>The Crank-Nicolson is also an implicit formulation in which the diffusion term is approximated by averaging the central difference at time levels <em>n</em> and <em>n</em>+1. The discretized equation is expressed as:</p>
+<div class="math notranslate nohighlight">
+\[Au_{i+1}^{n+1}+Bu_{i}^{n+1}+Cu_{i-1}^{n+1}=D\]</div>
+<p>where,</p>
+<div class="math notranslate nohighlight">
+\[A = -\frac{1}{2}d_{x}\]</div>
+<div class="math notranslate nohighlight">
+\[B = 1+d_{x}\]</div>
+<div class="math notranslate nohighlight">
+\[C = -\frac{1}{2}d_{x}\]</div>
+<div class="math notranslate nohighlight">
+\[D = \frac{1}{2}d_{x}u_{i+1}^{n}+(1-d_{x})u_{i}^{n}+\frac{1}{2}d_{x}u_{i-1}^{n}\]</div>
+<div class="math notranslate nohighlight">
+\[d_x=\frac{\nu(\Delta t)}{(\Delta x)^2}\]</div>
+<p>The Crank-Nicolson method is second-order accurate in both space and time.</p>
+<p>Function call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nanpack</span><span class="o">.</span><span class="n">parabolicsolvers</span><span class="o">.</span><span class="n">CrankNicolson</span><span class="p">(</span><span class="n">Uo</span><span class="p">,</span> <span class="n">diffX</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Important</strong>: It is to be noted that both Laasonen and Crank-Nicolson methods are inefficient for 2D applications because the coefficient matrix is pentadiagonal, the solution of which is very time-consuming.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Additional resources</strong></p></td>
+</tr>
+<tr class="row-even"><td><ol class="arabic simple">
+<li><p>Link to my <a class="reference external" href="https://www.linkedin.com/in/vishalsharmaofficial/detail/recent-activity/posts/">blogs</a>.</p></li>
+</ol>
+</td>
+</tr>
+<tr class="row-odd"><td><ol class="arabic simple" start="2">
+<li><p>Computational Fluid Dynamics, Vol. 1 by Dr. Klaus Hoffmann- This book is very clear and informative.</p></li>
+</ol>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="IV.-Script-Development">
+<h2>IV. Script Development<a class="headerlink" href="#IV.-Script-Development" title="Permalink to this headline">¶</a></h2>
+<p><em>This code script is provided in file</em> <code class="docutils literal notranslate"><span class="pre">./examples/tutorial-03-diffusion-1D-solvers-all.py</span></code></p>
+<p>Most of the script remains the same as in <a class="reference internal" href="tutorial-02-diffusion-1D-solvers-FTCS.html"><span class="doc">Tutorial 2</span></a> and therefore explanation is only provided on how you can automate to run all numerical methods in a single program without the need to write the same code multiple times.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Import modules</span>
+<span class="kn">import</span> <span class="nn">nanpack.preprocess</span> <span class="k">as</span> <span class="nn">pre</span>
+<span class="kn">from</span> <span class="nn">nanpack.grid</span> <span class="kn">import</span> <span class="n">RectangularGrid</span>
+<span class="kn">import</span> <span class="nn">nanpack.parabolicsolvers</span> <span class="k">as</span> <span class="nn">pb</span>
+<span class="kn">import</span> <span class="nn">nanpack.postprocess</span> <span class="k">as</span> <span class="nn">post</span>
+<span class="kn">from</span> <span class="nn">nanpack.benchmark</span> <span class="kn">import</span> <span class="n">ParallelPlateFlow</span>
+
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">RunConfig</span><span class="p">(</span><span class="s2">&quot;path/to/project/input/config.ini&quot;</span><span class="p">)</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">RectangularGrid</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">iMax</span><span class="p">)</span>
+<span class="n">diffX</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">DiffusionNumbers</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">Dimension</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">diff</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dT</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+*******************************************************
+*******************************************************
+Starting configuration.
+
+Searching for simulation configuration file in path:
+&#34;D:/MyProjects/projectroot/nanpack/input/config.ini&#34;
+SUCCESS: Configuration file parsing.
+Checking whether all sections are included in config file.
+Checking section SETUP: Completed.
+Checking section DOMAIN: Completed.
+Checking section MESH: Completed.
+Checking section IC: Completed.
+Checking section BC: Completed.
+Checking section CONST: Completed.
+Checking section STOP: Completed.
+Checking section OUTPUT: Completed.
+Checking numerical setup.
+User inputs in SETUP section check: Completed.
+Accessing domain geometry configuration: Completed
+Accessing meshing configuration: Completed.
+Calculating grid size: Completed.
+Assigning COLD-START initial conditions to the dependent term.
+Initialization: Completed.
+Accessing boundary condition settings: Completed
+Accessing constant data: Completed.
+Calculating time step size for the simulation: Completed.
+Calculating maximum iterations/steps for the simulation: Completed.
+Accessing simulation stop settings: Completed.
+Accessing settings for storing outputs: Completed.
+
+**********************************************************
+CASE DESCRIPTION                SUDDENLY ACC. PLATE
+SOLVER STATE                    TRANSIENT
+MODEL EQUATION                  DIFFUSION
+DOMAIN DIMENSION                1D
+    LENGTH                      0.04
+GRID STEP SIZE
+    dX                          0.001
+TIME STEP                       0.002
+GRID POINTS
+    along X                     41
+DIFFUSION CONST.                2.1700e-04
+DIFFUSION NUMBER                0.5
+TOTAL SIMULATION TIME           1.08
+NUMBER OF TIME STEPS            468
+START CONDITION                 COLD-START
+**********************************************************
+SUCEESS: Configuration completed.
+
+Uniform rectangular grid generation in cartesian coordinate system: Completed.
+Calculating diffusion numbers: Completed.
+</pre></div></div>
+</div>
+<p>Create a list <code class="docutils literal notranslate"><span class="pre">func</span></code> that contains the reference to the the numerical methods. Also, since in our configuration file we can provide only one file name as the input that will lead to overwriting of results in that one file, we have to provide 4 file names to the program to save the results from different numerical methods in their respective files. Let’s create a list <code class="docutils literal notranslate"><span class="pre">files</span></code> as shown in code cell 3.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">func</span> <span class="o">=</span> <span class="p">[</span><span class="n">pb</span><span class="o">.</span><span class="n">FTCS</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">DuFortFrankel</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">Laasonen</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">CrankNicolson</span><span class="p">]</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FTCS&quot;</span><span class="p">,</span> <span class="s2">&quot;DuFortFrankel&quot;</span><span class="p">,</span> <span class="s2">&quot;Laasonen&quot;</span><span class="p">,</span> <span class="s2">&quot;CrankNicolson&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Write a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop to iterate over the functions provided in the list <code class="docutils literal notranslate"><span class="pre">func</span></code>. In this way, one numerical solution is obtained using one method at the required time step and after completion, the next numerical method will be executed and so on, until all the numerical methods in <code class="docutils literal notranslate"><span class="pre">func</span></code> list have been executed.</p>
+<p>Since DuFort-Frankel method requires two sets of initial solution, one of which will be obtained using the FTCS method as can be seen in the codes. The accurcy of the DuFort-Frankel method depends on this starter solution and often this starter solution is provided by the analytical solution, if available.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Start a loop for 4 solver functions</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">func</span><span class="p">)):</span>
+    <span class="c1"># Define initial conditions</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">40.0</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="c1"># Define boundary conditions</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">BC</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">U</span><span class="p">)</span>
+    <span class="c1"># Start iterations</span>
+    <span class="n">Error</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span> <span class="ow">and</span> <span class="n">Error</span> <span class="o">&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ConvCrit</span><span class="p">:</span>
+        <span class="n">Error</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># DuFort Frankel will be executed in this block</span>
+        <span class="k">if</span> <span class="n">f</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># at first-time step, obtain starter solutions</span>
+                <span class="n">Uold</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># initial condition for n= -1 time level</span>
+                <span class="n">U</span> <span class="o">=</span> <span class="n">pb</span><span class="o">.</span><span class="n">FTCS</span><span class="p">(</span><span class="n">Uold</span><span class="p">,</span> <span class="n">diffX</span><span class="p">)</span> <span class="c1"># FTCS solution for n=0 time level</span>
+            <span class="n">Uold2</span> <span class="o">=</span> <span class="n">Uold</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># Store solution at (n-1)th time step</span>
+            <span class="n">Uold</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># Store solution at (n)th time step</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="n">func</span><span class="p">[</span><span class="n">f</span><span class="p">](</span><span class="n">Uold</span><span class="p">,</span> <span class="n">Uold2</span><span class="p">,</span> <span class="n">diffX</span><span class="p">)</span>
+        <span class="c1"># All other numerical methods will be executed in this block</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Uold</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="n">func</span><span class="p">[</span><span class="n">f</span><span class="p">](</span><span class="n">Uold</span><span class="p">,</span> <span class="n">diffX</span><span class="p">)</span>
+        <span class="n">Error</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">AbsoluteError</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">Uold</span><span class="p">)</span>
+        <span class="c1"># Update BC</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">BC</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+        <span class="c1"># Write output to file</span>
+        <span class="c1"># Provide a complete path where the files will be stored</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;path/to/project/output/</span><span class="si">{</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">}</span><span class="s2">1D.dat&quot;</span>
+        <span class="n">convfname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;path/to/project/output/hist</span><span class="si">{</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">}</span><span class="s2">1D.dat&quot;</span>
+        <span class="n">post</span><span class="o">.</span><span class="n">WriteSolutionToFile</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nWrite</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span>
+        <span class="c1"># Write convergence history log to a file</span>
+        <span class="n">post</span><span class="o">.</span><span class="n">WriteConvHistToFile</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">convfname</span><span class="p">)</span>
+
+    <span class="c1"># Write output to file</span>
+    <span class="n">post</span><span class="o">.</span><span class="n">WriteSolutionToFile</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nWrite</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span>
+    <span class="c1"># Write convergence history log to a file</span>
+    <span class="n">post</span><span class="o">.</span><span class="n">WriteConvHistToFile</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">convfname</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+STATUS: SOLUTION OBTAINED AT
+TIME LEVEL= 1.08 s.
+TIME STEPS= 468
+
+Writing convergence log file: Completed.
+Files saved:
+&#34;D:/MyProjects/projectroot/nanpack/output/histFTCS1D.dat&#34;.
+
+
+STATUS: SOLUTION OBTAINED AT
+TIME LEVEL= 1.08 s.
+TIME STEPS= 468
+
+Writing convergence log file: Completed.
+Files saved:
+&#34;D:/MyProjects/projectroot/nanpack/output/histDuFortFrankel1D.dat&#34;.
+
+
+STATUS: SOLUTION OBTAINED AT
+TIME LEVEL= 1.08 s.
+TIME STEPS= 468
+
+Writing convergence log file: Completed.
+Files saved:
+&#34;D:/MyProjects/projectroot/nanpack/output/histLaasonen1D.dat&#34;.
+
+
+STATUS: SOLUTION OBTAINED AT
+TIME LEVEL= 1.08 s.
+TIME STEPS= 468
+
+Writing convergence log file: Completed.
+Files saved:
+&#34;D:/MyProjects/projectroot/nanpack/output/histCrankNicolson1D.dat&#34;.
+
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Obtain analytical solution</span>
+<span class="n">Uana</span> <span class="o">=</span> <span class="n">ParallelPlateFlow</span><span class="p">(</span><span class="mf">40.0</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">diff</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">totTime</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">post</span><span class="o">.</span><span class="n">WriteSolutionToFile</span><span class="p">(</span><span class="n">Uana</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nWrite</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span><span class="p">,</span>
+                         <span class="s2">&quot;path/to/project/output/analytical1D.dat&quot;</span><span class="p">,</span>
+                         <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot the results using the <code class="docutils literal notranslate"><span class="pre">Plot1DResults</span></code> function included in the package. Use <code class="docutils literal notranslate"><span class="pre">help(Plot1DResults)</span></code> command to see the allowed input arguments.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fn</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># empty list to store full path to the files</span>
+<span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;analytical&quot;</span><span class="p">)</span> <span class="c1"># add another file name to the files list</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span> <span class="c1"># add complete path to files from which the plotting function will read data to plot</span>
+    <span class="n">fn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;path/to/project/output/</span><span class="si">{</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">}</span><span class="s2">1D.dat&quot;</span><span class="p">)</span>
+<span class="c1"># Call the plotting function and provide arguments to customize plot</span>
+<span class="n">post</span><span class="o">.</span><span class="n">Plot1DResults</span><span class="p">(</span><span class="n">dataFiles</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">uAxis</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">Markers</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">Legend</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>\
+                   <span class="n">Title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Comparison of Numerical Methods</span><span class="se">\n</span><span class="s2">at t=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">totTime</span><span class="si">}</span><span class="s2"> s.&quot;</span><span class="p">,</span>
+                  <span class="n">xLabel</span><span class="o">=</span><span class="s2">&quot;Velocity (m/s)&quot;</span><span class="p">,</span> <span class="n">yLabel</span><span class="o">=</span><span class="s2">&quot;Plate distance (m)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Preparing data to plot results...
+Plotting 1D results
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_tutorial-03-diffusion-1D-solvers-all_10_1.png" src="../_images/examples_tutorial-03-diffusion-1D-solvers-all_10_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">BC</span><span class="p">(</span><span class="n">U</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the dependent variable with the updated values at the boundaries.&quot;&quot;&quot;</span>
+    <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">40.0</span>
+    <span class="n">U</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">U</span>
+</pre></div>
+</div>
+</div>
+<p>Congratulation, you have created a script to run all the available numerical solvers for 1D diffusion model and compared the numerical results using plotting tools.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial 3: Solving a 1D diffusion equation using all methods</a><ul>
+<li><a class="reference internal" href="#I.-Objectives">I. Objectives</a></li>
+<li><a class="reference internal" href="#II.-Case-Description">II. Case Description</a></li>
+<li><a class="reference internal" href="#III.-Numerical-Methods">III. Numerical Methods</a></li>
+<li><a class="reference internal" href="#IV.-Script-Development">IV. Script Development</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial-02-diffusion-1D-solvers-FTCS.html"
+                        title="previous chapter">Tutorial 2. Solving a 1D diffusion equation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../CREDITS.html"
+                        title="next chapter">Credits</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/tutorial-03-diffusion-1D-solvers-all.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../CREDITS.html" title="Credits"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial-02-diffusion-1D-solvers-FTCS.html" title="Tutorial 2. Solving a 1D diffusion equation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">NAnPack 1.0.0-alpha4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../links-to-examples.html" >Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Tutorial 3: Solving a 1D diffusion equation using all methods</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Dr. Vishal Sharma.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

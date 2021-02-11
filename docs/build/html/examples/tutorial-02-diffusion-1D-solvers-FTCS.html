@@ -1,0 +1,734 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial 2. Solving a 1D diffusion equation &#8212; NAnPack 1.0.0-alpha4 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorial 3: Solving a 1D diffusion equation using all methods" href="tutorial-03-diffusion-1D-solvers-all.html" />
+    <link rel="prev" title="Tutorial 1. Understanding Configuration File" href="tutorial-01-understanding-config-file.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial-03-diffusion-1D-solvers-all.html" title="Tutorial 3: Solving a 1D diffusion equation using all methods"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial-01-understanding-config-file.html" title="Tutorial 1. Understanding Configuration File"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">NAnPack 1.0.0-alpha4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../links-to-examples.html" accesskey="U">Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Tutorial 2. Solving a 1D diffusion equation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Tutorial-2.-Solving-a-1D-diffusion-equation">
+<h1>Tutorial 2. Solving a 1D diffusion equation<a class="headerlink" href="#Tutorial-2.-Solving-a-1D-diffusion-equation" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+
+<span></span><span class="c1"># Document Author: Dr. Vishal Sharma</span>
+<span class="c1"># Author email: sharma_vishal14@hotmail.com</span>
+<span class="c1"># License: MIT</span>
+<span class="c1"># This tutorial is applicable for NAnPack version 1.0.0-alpha4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="I.-Background">
+<h2>I. Background<a class="headerlink" href="#I.-Background" title="Permalink to this headline">¶</a></h2>
+<p>The objective of this tutorial is to present the step-by-step solution of a 1D diffusion equation using NAnPack such that users can follow the instructions to learn using this package. The numerical solution is obtained using the Forward Time Central Spacing (FTCS) method. The detailed description of the FTCS method is presented in Section IV of this tutorial.</p>
+</div>
+<div class="section" id="II.-Case-Description">
+<h2>II. Case Description<a class="headerlink" href="#II.-Case-Description" title="Permalink to this headline">¶</a></h2>
+<p>We will be solving a classical probkem of a suddenly accelerated plate in fluid mechanicas which has the known exact solution. In this problem, the fluid is bounded between two parallel plates. The upper plate remains stationary and the lower plate is suddenly accelerated in <em>y</em>-direction at velocity <span class="math notranslate nohighlight">\(U_o\)</span>. It is required to find the velocity profile between the plates for the given initial and boundary conditions.</p>
+<p>(For the sake of simplicity in setting up numerical variables, let’s assume that the <em>x</em>-axis is pointed in the upward direction and <em>y</em>-axis is pointed along the horizontal direction as shown in the schematic below:</p>
+<img alt="parallel-plate-plot.png" src="data:image/png;base64,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1bZtWz344IMaNWqUli9frilTpqhLly7Kycn5wfvkTLeSCy+UpkzxM5stW6Rbb439TWx2tvTQQ/6v5B+OiuuSn+X85S/RDa1vv5X+/vfvX8ttt/nZWl6eNHOmdP75VfsUFkqHHuo3p4qLpRtuiG1v31768stovUcPv8l1111+E2rPHj9b/egjb8/NrfnDvnOntyUn+/rMmf7ccpdd5jf8Pv7Yg231ag/qHj38ZuCECb6PkhK/ESnFP1aHHOKBP26ctGmTb1u/XnrjjZrHr7DQgzopSfrmG2ny5H2PzYABfiXz9NNSWZk/PvpI+uwz/4IZPNh/I11cLK1Y4UH5Y3z6qY/L1KnSOed4oM+aJZ18MoF7IBk6dKi6d++uCy+8UNOmTdO0adN+3A73x7zHT13FOd1du8yuusosJcUfV10VO0+4YIHPM+bm+vqyZb4+d27sPmfNMjvmGLMWLfzmzIgRUVvFm0PVKZ/Tfewxs8MPN2vf3m+wlKs4p1tYaDZwoFliolmnTmZPPRW7/88/93nXVq2im0jr1/tNuvbtff6wZ8/o9c+aZXbiiTXXdsMNZq1b+w2mceN8LrvivOgjj5j94hdmzZubZWX5zSgzn58cNMisTRt/7lVXff+x2rXL51E7d/a+mZlmU6d626JFZh06xNa6fr3P2zZvbnbkkWaPPur7K59bfu89356UFNWzcqXZmWf6HHSbNmYnn+xzwWZ+Y/Wss/zYxx/vN1h/zJzuf/+77/8OcODYsGGDNW/e3O6v7qbF95RgVn6xhQPFmjU+BVBWVv08aF267DL/Cdrpp4c9LnCgy8jI0IwZM9S/f/8ftR/mdBGDv9AC6latoZvA5FI9SJe0Rk2aNJZUw6124CfuYL3I5kz3gJQviS874IfYHyeKdfmFwJwuAATET8YAICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwACInQBICBCFwAC+j9b7BwDvMFnmgAAAABJRU5ErkJggg==" />
+<p><strong>Initial conditions</strong></p>
+<div class="math notranslate nohighlight">
+\[u(t=0.0, 0.0&lt;x\leq H) = 0.0 \;m/s\]</div>
+<div class="math notranslate nohighlight">
+\[u(t=0.0, x=0.0) = 40.0 \;m/s\]</div>
+<p><strong>Boundary conditions</strong></p>
+<div class="math notranslate nohighlight">
+\[u(t\geq0.0, x=0.0) = 40.0 \;m/s\]</div>
+<div class="math notranslate nohighlight">
+\[u(t\geq0.0, x=H) = 0.0 \;m/s\]</div>
+<div class="line-block">
+<div class="line">Viscosity of fluid, <span class="math notranslate nohighlight">\(\;\;\nu = 2.17*10^{-4} \;m^2/s\)</span></div>
+<div class="line">Distance between plates, <span class="math notranslate nohighlight">\(\;\;H = 0.04 \;m\)</span></div>
+<div class="line">Grid step size, <span class="math notranslate nohighlight">\(\;\;dx = 0.001 \;m\)</span></div>
+<div class="line">Simulation time, <span class="math notranslate nohighlight">\(\;\;T = 1.08 \;sec\)</span></div>
+</div>
+<p>Specify the required simulation inputs based on our setup in the configuration file provided with this package. You may choose to save the configuration file with any other filename. I have saved the configuration file in the “input” folder of my project directory such that the relative path is <code class="docutils literal notranslate"><span class="pre">./input/config.ini</span></code>.</p>
+</div>
+<div class="section" id="III.-Governing-Equation">
+<h2>III. Governing Equation<a class="headerlink" href="#III.-Governing-Equation" title="Permalink to this headline">¶</a></h2>
+<p>The governing equation for the given application is the simplified for the the Navies-Stokes equation which is given as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u} {\partial t} = \nu\frac{\partial^2 u}{\partial x^2}\]</div>
+<p>This is the diffusion equation model and is classified as the parabolic PDE.</p>
+</div>
+<div class="section" id="IV.-FTCS-method">
+<h2>IV. FTCS method<a class="headerlink" href="#IV.-FTCS-method" title="Permalink to this headline">¶</a></h2>
+<p>The forward time central spacing approximation equation in 1D is presented here. This is a time explicit method which means that one unknown is calculated using the known neighbouring values from the previous time step. Here <em>i</em> represents grid point location, <em>n</em>+1 is the future time step, and <em>n</em> is the current time step.</p>
+<div class="math notranslate nohighlight">
+\[u_{i}^{n+1} = u_{i}^{n} + \frac{\nu\Delta t}{(\Delta x)^2}(u_{i+1}^{n} - 2u_{i}^{n} + u_{i-1}^{n})\]</div>
+<p>The order of this approximation is <span class="math notranslate nohighlight">\([(\Delta t), (\Delta x)^2]\)</span></p>
+<p>The diffusion number is given as <span class="math notranslate nohighlight">\(d_{x} = \nu\frac{\Delta t}{(\Delta x)^2}\)</span> and for one-dimensional applications the stability criteria is <span class="math notranslate nohighlight">\(d_{x}\leq\frac{1}{2}\)</span></p>
+<p>The solution presented here is obtained using a diffusion number = 0.5 (CFL = 0.5 in configuration file). Time step size will be computed using the expression of diffusion number. Beginners are encouraged to try diffusion numbers greater than 0.5 as an exercise after running this script.</p>
+<p>Users are encouraged to read my blogs on numerical methods - <a class="reference external" href="https://www.linkedin.com/in/vishalsharmaofficial/detail/recent-activity/posts/">link here</a>.</p>
+</div>
+<div class="section" id="V.-Script-Development">
+<h2>V. Script Development<a class="headerlink" href="#V.-Script-Development" title="Permalink to this headline">¶</a></h2>
+<p><em>Please note that this code script is provided in file ``./examples/tutorial-02-diffusion-1D-solvers-FTCS.py``.</em></p>
+<p>As per the Python established coding guidelines <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#imports">PEP 8</a>, all package imports must be done at the top part of the script in the following sequence – 1. import standard library 2. import third party modules 3. import local application/library specific</p>
+<p>Accordingly, in our code we will importing the following required modules (in alphabetical order). If you are using Jupyter notebook, hit <code class="docutils literal notranslate"><span class="pre">Shift</span> <span class="pre">+</span> <span class="pre">Enter</span></code> on each cell after typing the code.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">nanpack.benchmark</span> <span class="kn">import</span> <span class="n">ParallelPlateFlow</span>
+<span class="kn">import</span> <span class="nn">nanpack.preprocess</span> <span class="k">as</span> <span class="nn">pre</span>
+<span class="kn">from</span> <span class="nn">nanpack.grid</span> <span class="kn">import</span> <span class="n">RectangularGrid</span>
+<span class="kn">from</span> <span class="nn">nanpack.parabolicsolvers</span> <span class="kn">import</span> <span class="n">FTCS</span>
+<span class="kn">import</span> <span class="nn">nanpack.postprocess</span> <span class="k">as</span> <span class="nn">post</span>
+</pre></div>
+</div>
+</div>
+<p>As the first step in simulation, we have to tell our script to read the inputs and assign those inputs to the variables/objects that we will use in our entire code. For this purpose, there is a class <code class="docutils literal notranslate"><span class="pre">RunConfig</span></code> in <code class="docutils literal notranslate"><span class="pre">nanpack.preprocess</span></code> module. We will call this class and assign an object (instance) to it so that we can use its member variables. The <code class="docutils literal notranslate"><span class="pre">RunConfig</span></code> class is written in such a manner that its methods get executed as soon as it’s instance is created. The users must provide the
+configuration file path as a parameter to <code class="docutils literal notranslate"><span class="pre">RunConfig</span></code> class.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">FileName</span> <span class="o">=</span> <span class="s2">&quot;path/to/project/input/config.ini&quot;</span> <span class="c1"># specify the correct file path</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">RunConfig</span><span class="p">(</span><span class="n">FileName</span><span class="p">)</span> <span class="c1"># cfg is an instance of RunConfig class which can be used to access class variables. You may choose any variable in place of cfg.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+*******************************************************
+*******************************************************
+Starting configuration.
+
+Searching for simulation configuration file in path:
+&#34;D:/MyProjects/projectroot/nanpack/input/config.ini&#34;
+SUCCESS: Configuration file parsing.
+Checking whether all sections are included in config file.
+Checking section SETUP: Completed.
+Checking section DOMAIN: Completed.
+Checking section MESH: Completed.
+Checking section IC: Completed.
+Checking section BC: Completed.
+Checking section CONST: Completed.
+Checking section STOP: Completed.
+Checking section OUTPUT: Completed.
+Checking numerical setup.
+User inputs in SETUP section check: Completed.
+Accessing domain geometry configuration: Completed
+Accessing meshing configuration: Completed.
+Calculating grid size: Completed.
+Assigning COLD-START initial conditions to the dependent term.
+Initialization: Completed.
+Accessing boundary condition settings: Completed
+Accessing constant data: Completed.
+Calculating time step size for the simulation: Completed.
+Calculating maximum iterations/steps for the simulation: Completed.
+Accessing simulation stop settings: Completed.
+Accessing settings for storing outputs: Completed.
+
+**********************************************************
+CASE DESCRIPTION                SUDDENLY ACC. PLATE
+SOLVER STATE                    TRANSIENT
+MODEL EQUATION                  DIFFUSION
+DOMAIN DIMENSION                1D
+    LENGTH                      0.04
+GRID STEP SIZE
+    dX                          0.001
+TIME STEP                       0.002
+GRID POINTS
+    along X                     41
+DIFFUSION CONST.                2.1700e-04
+DIFFUSION NUMBER                0.5
+TOTAL SIMULATION TIME           1.08
+NUMBER OF TIME STEPS            468
+START CONDITION                 COLD-START
+**********************************************************
+SUCEESS: Configuration completed.
+
+</pre></div></div>
+</div>
+<p>You will obtain several configuration messages on your output screen so that you can verify that your inputs are correct and that the configuration is successfully completed. Next step is the assignment of initial conditions and the boundary conditions. For assigning boundary conditions, I have created a function <code class="docutils literal notranslate"><span class="pre">BC()</span></code> which we will be calling in the next cell. I have included this function at the bottom of this tutorial for your reference. It is to be noted that U is the dependent variable
+that was initialized when we executed the configuration, and thus we will be using <code class="docutils literal notranslate"><span class="pre">cfg.U</span></code> to access the initialized U. In a similar manner, all the inputs provided in the configuration file can be obtained by using configuration class object <code class="docutils literal notranslate"><span class="pre">cfg.</span></code> as the prefix to the variable names. Users are allowed to use any object of their choice.</p>
+<p><em>If you are using Jupyter Notebook, the function BC must be executed before referencing to it, otherwise, you will get an error. Jump to the bottom of this notebook where you see code cell # 1 containing the ``BC()`` function</em></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Assign initial conditions</span>
+<span class="n">cfg</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">40.0</span>
+<span class="n">cfg</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c1"># Assign boundary conditions</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">BC</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">U</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Next, we will be calculating location of all grid points within the domain using the function <code class="docutils literal notranslate"><span class="pre">RectangularGrid()</span></code> and save values into X. We will also require to calculate diffusion number in X direction. In nanpack, the program treats the diffusion number = CFL for 1D applications that we entered in the configuration file, and therefore this step may be skipped, however, it is not the same in two-dimensional applications and therefore to stay consistent and to avoid confusion we will be using
+the function <code class="docutils literal notranslate"><span class="pre">DiffusionNumbers()</span></code> to compute the term <code class="docutils literal notranslate"><span class="pre">diffX</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">RectangularGrid</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">iMax</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Uniform rectangular grid generation in cartesian coordinate system: Completed.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">diffX</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">DiffusionNumbers</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">Dimension</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">diff</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dT</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Calculating diffusion numbers: Completed.
+</pre></div></div>
+</div>
+<p>Next, we will initialize some local variables before start the time stepping:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">Error</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># variable to keep track of error</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># variable to advance in time</span>
+</pre></div>
+</div>
+</div>
+<p>Start time loop using while loop such that if one of the condition returns False, the time stepping will be stopped. For explanation of each line, see the comments. Please note the identation of the codes within the while loop. Take extra care with indentation as Python is very particular about it.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">while</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span> <span class="ow">and</span> <span class="n">Error</span> <span class="o">&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ConvCrit</span><span class="p">:</span> <span class="c1"># start loop</span>
+    <span class="n">Error</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># reset error to 0.0 at the beginning of each step</span>
+    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># advance the value of n at each step</span>
+    <span class="n">Uold</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># store solution at time level, n</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">FTCS</span><span class="p">(</span><span class="n">Uold</span><span class="p">,</span> <span class="n">diffX</span><span class="p">)</span> <span class="c1"># solve for U using FTCS method at time level n+1</span>
+    <span class="n">Error</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">AbsoluteError</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">Uold</span><span class="p">)</span> <span class="c1"># calculate errors</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">BC</span><span class="p">(</span><span class="n">U</span><span class="p">)</span> <span class="c1"># Update BC</span>
+    <span class="n">post</span><span class="o">.</span><span class="n">MonitorConvergence</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Error</span><span class="p">)</span> <span class="c1"># Use this function to monitor convergence</span>
+    <span class="n">post</span><span class="o">.</span><span class="n">WriteSolutionToFile</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nWrite</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span><span class="p">,</span>\
+                             <span class="n">cfg</span><span class="o">.</span><span class="n">OutFileName</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span> <span class="c1"># Write output to file</span>
+    <span class="n">post</span><span class="o">.</span><span class="n">WriteConvHistToFile</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Error</span><span class="p">)</span> <span class="c1"># Write convergence log to history file</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   ITER           ERROR
+   ----           -----
+     10      4.92187500
+     20      3.52394104
+     30      2.88928896
+     40      2.50741375
+     50      2.24550338
+     60      2.05156084
+     70      1.90048503
+     80      1.77844060
+     90      1.67704721
+    100      1.59085792
+    110      1.51614304
+    120      1.45025226
+    130      1.39125374
+    140      1.33771501
+    150      1.28856146
+    160      1.24298016
+    170      1.20035213
+    180      1.16020337
+    190      1.12216882
+    200      1.08596559
+    210      1.05137298
+    220      1.01821734
+    230      0.98636083
+    240      0.95569280
+    250      0.92612336
+    260      0.89757851
+    270      0.86999638
+    280      0.84332454
+    290      0.81751777
+    300      0.79253655
+    310      0.76834575
+    320      0.74491380
+    330      0.72221190
+    340      0.70021355
+    350      0.67889409
+    360      0.65823042
+    370      0.63820074
+    380      0.61878436
+    390      0.59996158
+    400      0.58171354
+    410      0.56402217
+    420      0.54687008
+    430      0.53024053
+    440      0.51411737
+    450      0.49848501
+    460      0.48332837
+
+STATUS: SOLUTION OBTAINED AT
+TIME LEVEL= 1.08 s.
+TIME STEPS= 468
+
+Writing convergence log file: Completed.
+Files saved:
+&#34;D:/MyProjects/projectroot/nanpack/output/HISTftcs1D.dat&#34;.
+</pre></div></div>
+</div>
+<p>In the above convergence monitor, it is worth noting that the solution error is gradually moving towards zero which is what we need to confirm stability in the solution. If the solution becomes unstable, the errors will rise, probably upto the point where your code will crash. As you know that the solution obtained is a time-dependent solution and therefore, we didn’t allow the code to run until the convergence is observed. If a steady-state solution is desired, change the STATE key in the
+configuration file equals to “STEADY” and specify a much larger value of nMax key, say nMax = 5000. This is left as an exercise for the users to obtain a stead-state solution. Also, try running the solution with the larger grid step size, <span class="math notranslate nohighlight">\(\Delta x\)</span> or a larger time step size, <span class="math notranslate nohighlight">\(\Delta t\)</span>.</p>
+<p>After the time stepping is completed, save the final results to the output files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Write output to file</span>
+<span class="n">post</span><span class="o">.</span><span class="n">WriteSolutionToFile</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nWrite</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nMax</span><span class="p">,</span>
+                         <span class="n">cfg</span><span class="o">.</span><span class="n">OutFileName</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dX</span><span class="p">)</span>
+<span class="c1"># Write convergence history log to a file</span>
+<span class="n">post</span><span class="o">.</span><span class="n">WriteConvHistToFile</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Error</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Verify that the files are saved in the target directory. Now let us obtain analytical solution of this flow that will help us in validating our codes.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Obtain analytical solution</span>
+<span class="n">Uana</span> <span class="o">=</span> <span class="n">ParallelPlateFlow</span><span class="p">(</span><span class="mf">40.0</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">diff</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">totTime</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Next, we will validate our results by plotting the results using the matplotlib package that we have imported above. Type the following lines of codes:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;serif&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># Assign fonts in the plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span> <span class="c1"># Create axis for plotting</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="s2">&quot;&gt;-.b&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FTCS&quot;</span><span class="p">,</span>\
+         <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># Plot data with required labels and markers, customize the plot however you may like</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Uana</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="s2">&quot;o:r&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Analytical&quot;</span><span class="p">,</span>\
+             <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># Plot analytical solution on the same plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Velocity (m/s)&#39;</span><span class="p">)</span> <span class="c1"># X-axis labelling</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Plate distance (m)&#39;</span><span class="p">)</span> <span class="c1"># Y-axis labelling</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Velocity profile</span><span class="se">\n</span><span class="s2">at t=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">totTime</span><span class="si">}</span><span class="s2"> sec&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># Plot title</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># Show plot- this command is very important</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_tutorial-02-diffusion-1D-solvers-FTCS_24_0.png" src="../_images/examples_tutorial-02-diffusion-1D-solvers-FTCS_24_0.png" />
+</div>
+</div>
+<p>Function for the boundary conditions.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">BC</span><span class="p">(</span><span class="n">U</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the dependent variable with the updated values at the boundaries.&quot;&quot;&quot;</span>
+    <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">40.0</span>
+    <span class="n">U</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">U</span>
+</pre></div>
+</div>
+</div>
+<p>Congratulations, you have completed the first coding tutoria using nanpack package and verified that your codes produced correct results. If you solve some other similar diffusion-1D model example, share it with the nanpack community. I will be excited to see your projects.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial 2. Solving a 1D diffusion equation</a><ul>
+<li><a class="reference internal" href="#I.-Background">I. Background</a></li>
+<li><a class="reference internal" href="#II.-Case-Description">II. Case Description</a></li>
+<li><a class="reference internal" href="#III.-Governing-Equation">III. Governing Equation</a></li>
+<li><a class="reference internal" href="#IV.-FTCS-method">IV. FTCS method</a></li>
+<li><a class="reference internal" href="#V.-Script-Development">V. Script Development</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial-01-understanding-config-file.html"
+                        title="previous chapter">Tutorial 1. Understanding Configuration File</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial-03-diffusion-1D-solvers-all.html"
+                        title="next chapter">Tutorial 3: Solving a 1D diffusion equation using all methods</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/tutorial-02-diffusion-1D-solvers-FTCS.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial-03-diffusion-1D-solvers-all.html" title="Tutorial 3: Solving a 1D diffusion equation using all methods"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial-01-understanding-config-file.html" title="Tutorial 1. Understanding Configuration File"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">NAnPack 1.0.0-alpha4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../links-to-examples.html" >Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Tutorial 2. Solving a 1D diffusion equation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Dr. Vishal Sharma.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>
