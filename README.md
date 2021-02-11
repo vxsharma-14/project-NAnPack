@@ -2,14 +2,16 @@
 
 ### A Numerical Analysis Package in Python
 
-NAnPack Learners Edition is a collection of tools and numerical solvers based on existing computational methods for one-dimensional and two-dimensional partial differential equations written in Python language and inteded for use in learning and teaching.
+Edition - Learner's
+
+NAnPack Learner's Edition is a collection of tools and numerical solvers based on existing computational methods for one-dimensional and two-dimensional partial differential equations written in Python language and inteded for use in learning and teaching.
 
 Thank you for visiting this page. I hope that together we will make NAnPack a great experience for all users.
 
 # Version
 
 ## 1.0.0-alpha3
-This package follows Semantic Versioning guidelines. The current version of this package is an alpha version (pre-release) and is currently being tested. Most probably it will not work as expected, however, please consider reporting issues to the repo owner. 
+This package follows Semantic Versioning guidelines. The current version of this package is an alpha version (pre-release) and is currently being tested. Most probably it will not work as expected, however, please consider reporting issues to the repo owner.
 
 # Table of Contents
 1. [Installation](#Installation)

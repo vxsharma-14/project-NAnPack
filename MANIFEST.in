@@ -7,8 +7,8 @@ include *.md
 include LICENSE.md
 
 # Include the data files
-#recursive-include data *
+#recursive-include Project_NAnPack-benchmark
 
 # Include the configuration files for the simulation
-include D:\\MyProjects\\FluiDynPy\\Project_NAnPack\\input\\config.ini
-include D:\\MyProjects\\FluiDynPy\\Project_NAnPack\\input\\bc.ini
+include nanpack/input/*.ini
+include nanpack/tests/*.py
