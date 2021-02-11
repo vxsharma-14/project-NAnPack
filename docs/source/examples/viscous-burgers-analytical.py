@@ -1,7 +1,6 @@
-"""Not a public module in version 1.0.0-alpha4."""
-#   ***********************************************************************
+#**************************************************************************
 #
-#   FILE         clustering.py
+#   FILE         viscous-burgers-analytical.py
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
@@ -36,26 +35,20 @@
 #   You should have received a copy of the MIT License along with
 #   NAnPack Learner's Edition.
 #
-#   ***********************************************************************
+#**************************************************************************
+def test_analyt():
+    '''Test viscous Burgers analytical solution routine.'''
+    import nanpack.grid as grid
+    import nanpack.benchmark as bm
+    import matplotlib.pyplot as plt
+    import numpy as np
+    x, _ = grid.RectangularGrid(0.2, 91)
+    Uanaly = bm.ViscousBurgersSolution(1, x, 0.1)
+    ax = plt.subplot()
+    plt.plot(x,Uanaly)
+    plt.xticks(np.arange(-9.0, 10.0, 3.0))
+    plt.yticks(np.arange(round(min(Uanaly)), round(max(Uanaly)+1), 1.0))
+    plt.show()
 
-
-def ExternalFlowClustering(Xi, Eta, Beta, Height):
-    """Return the clustered grid near the X-lo or Y-lo wall boundaries.
-
-    This function is not complete or tested for accuracy.
-    """
-    shapeX = Xi.shape()
-    iMax, jMax = shapeX
-
-    # If clustering is required near Y = 0.0 surface in positive Y
-    # direction.
-    Beta1 = (Beta+1.0) / (Beta-1.0)
-
-    X = Xi.copy()
-    Y = Eta.copy()
-    Y[:, :] = (
-        Height * ((Beta+1.0) - (Beta-1.0)) * Beta1**(1.0-Eta[:, :])
-        / (Beta1**(1.0-Eta[:, :]) + 1.0)
-        )
-
-    return X, Y
+if __name__ == '__main__':
+    test_analyt()

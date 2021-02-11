@@ -1,61 +1,95 @@
-#**************************************************************************
+"""Not a public module."""
+#   ***********************************************************************
+#
+#   FILE         checkconfig.py
+#
+#   AUTHOR       Dr. Vishal Sharma
+#
+#   VERSION      1.0.0-alpha4
+#
+#   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
+#
+#   NAnPack Learner's Edition is distributed under the MIT License.
+#
+#   Copyright (c) 2020 Vishal Sharma
+#
+#   Permission is hereby granted, free of charge, to any person
+#   obtaining a copy of this software and associated documentation
+#   files (the "Software"), to deal in the Software without restriction,
+#   including without limitation the rights to use, copy, modify, merge,
+#   publish, distribute, sublicense, and/or sell copies of the Software,
+#   and to permit persons to whom the Software is furnished to do so,
+#   subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be
+#   included in all copies or substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+#   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+#   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+#   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#   SOFTWARE.
+#
+#   You should have received a copy of the MIT License along with
+#   NAnPack Learner's Edition.
+#
+#   ***********************************************************************
+
+
+from .exceptions import SectionNotFoundError, InvalidValueError
+
+
 def CheckSections(config, InFileName):
-    '''Check that all sections exist in the configuration file.
-
-    If not, raise an exception.
-    '''
-    sections = ['SETUP', 'DOMAIN', 'MESH', 'IC', 'BC', 'CONST', 'STOP',\
-                'OUTPUT']
+    """Check that all sections exist in the configuration file."""
+    sections = ["SETUP",
+                "DOMAIN",
+                "MESH",
+                "IC",
+                "BC",
+                "CONST",
+                "STOP",
+                "OUTPUT"
+                ]
     for section in sections:
-        if config.has_section(section) == True:
+        if config.has_section(section):
             print(f'Checking section {section}: Completed.')
         else:
-            raise Exception(f'Section "{section}" not found.\nin file :\
- "{InFileName}".\nCheck configuration file.')
+            raise SectionNotFoundError(section, InFileName)
 
-#**************************************************************************
+
 def CheckBCSections(config, InFileName):
-    '''Check that all sections exist in the configuration file.
-
-    If not, raise an exception.
-    '''
-    sections = ['INLET', 'WALL', 'FAR-FIELD', 'OUTLET']
+    """Check that all sections exist in the configuration file."""
+    sections = ["INLET",
+                "WALL",
+                "FAR-FIELD",
+                "OUTLET"
+                ]
     for section in sections:
-        if config.has_section(section) == True:
-            print(f'Checking section {section}: Completed.')
+        if config.has_section(section):
+            print(f"Checking section {section}: Completed.")
         else:
-            raise Exception(f'Section "{section}" not found.\nin file :\
- "{InFileName}".\nCheck BC configuration file.')
+            raise SectionNotFoundError(section, InFileName)
 
-#**************************************************************************
+
 def CheckSetupSection(config, State, Model, Dimension, InFileName):
-    '''Check if all the options in section SETUP exist and the values are
-    entered only from the available choices.
-
-    If not, raise an exception.
-    '''
+    """Check that valid inputs are provided in SETUP section."""
     import nanpack.backend.fetchoptions as fo
-    fetch = fo.FetchOptions()
-    
+    fetch = fo._FetchOptions()
+
     state_options = fetch.StateOptions()
     model_options = fetch.ModelOptions()
     dim_options = fetch.DimensionOptions()
-    
 
     if not State.upper() in state_options:
-        raise Exception(f'Invalid STATE info: {State}.\nin file:\
- "{InFileName}".\nin section: SETUP.\nAvailable options are:\
- {state_options}.')
+        raise InvalidValueError("STATE", State)
 
     if not Model.upper() in model_options:
-        raise Exception(f'Invalid MODEL info: {Model}.\nin file:\
- "{InFileName}".\nin section: SETUP.\nAvailable options are:\
- {model_options}.')
+        raise InvalidValueError("MODEL", Model)
 
     if not Dimension.upper() in dim_options:
-        raise Exception(f'Invalid DIMENSION info: {Dimension}.\nin file:\
- "{InFileName}".\nin section: SETUP.\nAvailable options are:\
- {dim_options}.')
+        raise InvalidValueError("DIMENSION", Dimension)
 
     print("User inputs in SETUP section check: Completed.")
-#**************************************************************************

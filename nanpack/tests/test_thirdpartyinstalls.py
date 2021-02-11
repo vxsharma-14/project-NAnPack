@@ -1,7 +1,6 @@
-"""Not a public module in version 1.0.0-alpha4."""
 #   ***********************************************************************
 #
-#   FILE         clustering.py
+#   FILE         test_requiredinstalls.py
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
@@ -39,23 +38,34 @@
 #   ***********************************************************************
 
 
-def ExternalFlowClustering(Xi, Eta, Beta, Height):
-    """Return the clustered grid near the X-lo or Y-lo wall boundaries.
+def test_3rdpartypackage():
+    """Test numpy and matplotlib installation."""
+    try:
+        import numpy as np
+        import matplotlib.pyplot as plt
+        x = np.arange(0, 361, 10)
+        y = np.sin(x*3.14/180.0)
+        plt.plot(x, y)
+        plt.title("Plot of sin(theta)")
+        plt.xlabel("X")
+        plt.ylabel("sin(theta)")
+        plt.xlim(0, 360)
+        print("Close plot to continue testing.")
+        plt.show()
+    except:
+        print("")
 
-    This function is not complete or tested for accuracy.
-    """
-    shapeX = Xi.shape()
-    iMax, jMax = shapeX
 
-    # If clustering is required near Y = 0.0 surface in positive Y
-    # direction.
-    Beta1 = (Beta+1.0) / (Beta-1.0)
+def test_mathpackage():
+    """Test math package."""
+    import math
+    mp = round(math.pi, 2)
+    assert mp == 3.14
 
-    X = Xi.copy()
-    Y = Eta.copy()
-    Y[:, :] = (
-        Height * ((Beta+1.0) - (Beta-1.0)) * Beta1**(1.0-Eta[:, :])
-        / (Beta1**(1.0-Eta[:, :]) + 1.0)
-        )
 
-    return X, Y
+if __name__ == "__main__":
+    test_3rdpartypackage()
+    print("Numpy package test SUCCESS.")
+    print("Matplotlib package test SUCCESS.")
+    test_mathpackage()
+    print("Math package test SUCCESS.")
