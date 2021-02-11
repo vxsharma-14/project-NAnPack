@@ -1,7 +1,6 @@
-"""Not a public module in version 1.0.0-alpha4."""
 #   ***********************************************************************
 #
-#   FILE         clustering.py
+#   FILE         test_nanpackinstall.py
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
@@ -39,23 +38,33 @@
 #   ***********************************************************************
 
 
-def ExternalFlowClustering(Xi, Eta, Beta, Height):
-    """Return the clustered grid near the X-lo or Y-lo wall boundaries.
+import os
+import sys
+import nanpack
+import nanpack.simset as st
 
-    This function is not complete or tested for accuracy.
-    """
-    shapeX = Xi.shape()
-    iMax, jMax = shapeX
 
-    # If clustering is required near Y = 0.0 surface in positive Y
-    # direction.
-    Beta1 = (Beta+1.0) / (Beta-1.0)
+def test_nanpack():
+    """Test nanpack installation."""
 
-    X = Xi.copy()
-    Y = Eta.copy()
-    Y[:, :] = (
-        Height * ((Beta+1.0) - (Beta-1.0)) * Beta1**(1.0-Eta[:, :])
-        / (Beta1**(1.0-Eta[:, :]) + 1.0)
-        )
+    with DisablePrint():
+        pathf = os.path.abspath(nanpack.__file__)
+        cfgpath = pathf.replace("__init__.py", "input\\config-test.ini")
+        cfg = st.RunConfig(cfgpath)
+    assert cfg.dX == 5.0, "Package installation test failed."
 
-    return X, Y
+
+class DisablePrint:
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout.close()
+        sys.stdout = self._original_stdout
+
+
+if __name__ == '__main__':
+
+    test_nanpack()
+    print('NAnPack package test SUCCESS.')
