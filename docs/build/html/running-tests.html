@@ -297,6 +297,18 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Document Author: Dr. Vishal Sharma</span>
+<span class="c1"># Author email: sharma_vishal14@hotmail.com</span>
+<span class="c1"># License: MIT</span>
+<span class="c1"># This tutorial is applicable for NAnPack version 1.0.0-alpha4</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="Running-Tests">
 <h1>Running Tests<a class="headerlink" href="#Running-Tests" title="Permalink to this headline">¶</a></h1>
 <p>Users are advised to follow the instructions given here to run the required tests on Jupyter Notebook after installing the package.</p>
@@ -309,11 +321,11 @@ div.rendered_html tbody tr:hover {
 <h2>Test # 1<a class="headerlink" href="#Test-#-1" title="Permalink to this headline">¶</a></h2>
 <p>First test is to verify whether the nanpack is installed correctly on your system. This is performed by running “test_nanpack.py” file in the <code class="docutils literal notranslate"><span class="pre">tests</span></code> folder of your project root. Enter the command shown in cell 2 (replace with correct project path) of this notebook and verify that the test is completed successfully as shown in the ouput below.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">run</span> path/to/myproject/tests/test_nanpackinstall.py
+<span></span><span class="o">%</span><span class="k">run</span> -m nanpack.tests.test_nanpackinstall
 </pre></div>
 </div>
 </div>
@@ -330,11 +342,11 @@ NAnPack package test SUCCESS.
 <h2>Test # 2<a class="headerlink" href="#Test-#-2" title="Permalink to this headline">¶</a></h2>
 <p>Next test is to verify whether the required third party packages- NumPy and matplotlib are installed correctly on your system. Run script “test_thirdpartyinstalls.py” by entering the command shown in cell 3 (replace with correct project path) and verify that the test is completed successfully as shown in the ouput below.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">run</span> path/to/myproject/tests/test_thirdpartyinstalls.py
+<span></span><span class="o">%</span><span class="k">run</span> -m nanpack.tests.test_thirdpartyinstalls
 </pre></div>
 </div>
 </div>
@@ -350,7 +362,7 @@ Close plot to continue testing.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/running-tests_4_1.png" src="_images/running-tests_4_1.png" />
+<img alt="_images/running-tests_5_1.png" src="_images/running-tests_5_1.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -368,11 +380,11 @@ Math package test SUCCESS.
 <h2>Test # 3<a class="headerlink" href="#Test-#-3" title="Permalink to this headline">¶</a></h2>
 <p>Lestly, we need to verify that the important components of nanpack are working. Enter the command shown in cell 3 (replace with correct project path) and verify that the test is completed successfully as shown in the ouput below.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">run</span> path/to/myproject/tests/test_run.py
+<span></span><span class="o">%</span><span class="k">run</span> -m nanpack.tests.test_run
 </pre></div>
 </div>
 </div>
@@ -382,6 +394,7 @@ Math package test SUCCESS.
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Uniform rectangular grid generation in cartesian coordinate system: Completed.
+2
 Assigning COLD-START initial conditions to the dependent term.
 Initialization: Completed.
    ITER           ERROR
@@ -407,7 +420,7 @@ Test run execution SUCCESS.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/running-tests_6_1.png" src="_images/running-tests_6_1.png" />
+<img alt="_images/running-tests_7_1.png" src="_images/running-tests_7_1.png" />
 </div>
 </div>
 </div>
