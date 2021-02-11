@@ -383,7 +383,7 @@ configuration file path as a parameter to <code class="docutils literal notransl
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">FileName</span> <span class="o">=</span> <span class="s2">&quot;path/to/project/input/config.ini&quot;</span> <span class="c1"># specify the correct file path</span>
+<span></span><span class="n">FileName</span> <span class="o">=</span> <span class="s2">&quot;D:/MyProjects/projectroot/nanpack/input/config.ini&quot;</span> <span class="c1"># specify the correct file path</span>
 <span class="n">cfg</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">RunConfig</span><span class="p">(</span><span class="n">FileName</span><span class="p">)</span> <span class="c1"># cfg is an instance of RunConfig class which can be used to access class variables. You may choose any variable in place of cfg.</span>
 </pre></div>
 </div>
@@ -633,6 +633,7 @@ configuration file equals to “STEADY” and specify a much larger value of nMa
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Velocity (m/s)&#39;</span><span class="p">)</span> <span class="c1"># X-axis labelling</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Plate distance (m)&#39;</span><span class="p">)</span> <span class="c1"># Y-axis labelling</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Velocity profile</span><span class="se">\n</span><span class="s2">at t=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">totTime</span><span class="si">}</span><span class="s2"> sec&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># Plot title</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># Show plot- this command is very important</span>
 </pre></div>
 </div>
