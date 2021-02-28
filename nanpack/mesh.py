@@ -1,7 +1,7 @@
 """A module consisting of various meshing functions."""
 #   ***********************************************************************
 #
-#   FILE         grid.py
+#   FILE         mesh.py
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
