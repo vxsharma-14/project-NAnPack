@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #include pyproject.toml
 
 # Include the README
@@ -12,3 +13,19 @@ include LICENSE.md
 # Include the configuration files for the simulation
 include nanpack/input/*.ini
 include nanpack/tests/*.py
+=======
+#include pyproject.toml
+
+# Include the README
+include *.md
+
+# Include the license file
+include LICENSE.md
+
+# Include the data files
+
+
+# Include the configuration files for the simulation
+include nanpack/input/*.ini
+include nanpack/tests/*.py
+>>>>>>> Stashed changes

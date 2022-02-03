@@ -13,6 +13,10 @@ Thank you for visiting this page. I hope that together we will make NAnPack a gr
 ## 1.0.0-alpha4
 This package follows Semantic Versioning guidelines. The current version of this package is an alpha version (pre-release) and it is still being developed to add more capabilities. 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 # Table of Contents
 1. [Installation](#Installation)
 2. [Usage](#Usage)
@@ -24,7 +28,11 @@ This package follows Semantic Versioning guidelines. The current version of this
 For installation instructions, visit [INSTALLATION](https://project-nanpack.readthedocs.io/en/latest/INSTALLATION.html) page.
 
 # Usage
+<<<<<<< Updated upstream
 The NAnPack Learners edition is intended to be used for the purpose of teaching and learning various numerical schemes for solving partial differential equations in engineering and science. 
+=======
+The NAnPack Learners edition is intended to be used for the purpose of teaching and learning various numerical schemes for solving partial differential equations in engineering and science.
+>>>>>>> Stashed changes
 
 For detailed usage tutorials, read [USAGE](https://project-nanpack.readthedocs.io/en/latest/) page.
 
