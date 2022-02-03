@@ -4,13 +4,13 @@
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation

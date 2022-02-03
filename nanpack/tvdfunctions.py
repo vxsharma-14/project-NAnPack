@@ -5,13 +5,13 @@
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -38,12 +38,12 @@
 #
 #   ***********************************************************************
 
-import nanpack.secondaryfunctions as sf
+import nanpack.utils as utils
 import nanpack.limiters as tvd
 from .backend.exceptions import TVDLimiterInputError
 
 
-def _CalculateTVD(i, Uo, E, Eps, Courant, Limiter, LimFunction):
+def CalculateTVD(i, Uo, E, Eps, Courant, Limiter, LimFunction):
     """Return a limiter function for the second-order TVD schemes.
 
     A dictionary is used to call the required limiter function based on
@@ -54,14 +54,14 @@ def _CalculateTVD(i, Uo, E, Eps, Courant, Limiter, LimFunction):
     first six function arguments are provided as input arguments to the
     selected limiter function method.
     """
-    tvd = {
+    tvd_type = {
         "Harten-Yee-Upwind": HartenYeeUpwind,
         "Modified-Harten-Yee-Upwind": ModifiedHartenYeeUpwind,
         "Roe-Sweby-Upwind": RoeSwebyUpwind,
         "Davis-Yee-Symmetric": DavisYeeSymmetric
         }
 
-    SelectedFunction = tvd.get(LimFunction)
+    SelectedFunction = tvd_type.get(LimFunction)
     return SelectedFunction(i, Uo, E, Eps, Courant, Limiter)
 
 
@@ -72,64 +72,49 @@ def HartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter):
     using the Harten-Yee Upwind TVD limiters.
 
     Call signature:
-
         HartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter)
 
     Parameters
     ----------
-    i : int
-
+    i:  int
         Integer value from the "for" loop to advance in space.
-
-    Uo : 1D or 2D array
-
-        The dependent variable from time level (n) within the domain.
-
-    E : 1D or 2D array
-
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    E: ndarray[float], =1D
         The flux vector for the non-linear term in the inviscid Burgers
-        equation, which is E = U^2/2
-
-    Eps : float
-
+        equation, which is E = U^2/2.
+    Eps: float
         A positive constant value within the range 0.0 and 0.125.
-
-    Courant : float
-
+    Courant: float
          Courant number (entered as user input in file).
-
-    Limiter : str
-
+    Limiter: str
           The limiter for the TVD function.
           Options available for Harten-Yee Upwind TVD Limiters = "G".
 
     Returns
     -------
-    phiPlus : float
-
+    phiPlus: float
         Flux limiter function at i+1/2 location.
-
-    phiMinus : float
-
+    phiMinus: float
         Flux limiter function at i-1/2 location.
     """
-    dUiPlus12 = sf.CalcUi(Uo[i+1], Uo[i])
-    dUiPlus32 = sf.CalcUi(Uo[i+2], Uo[i+1])
+    dUiPlus12 = utils.CalcUi(Uo[i+1], Uo[i])
+    dUiPlus32 = utils.CalcUi(Uo[i+2], Uo[i+1])
 
-    dUiMinus12 = sf.CalcUi(Uo[i], Uo[i-1])
-    dUiMinus32 = sf.CalcUi(Uo[i-1], Uo[i-2])
+    dUiMinus12 = utils.CalcUi(Uo[i], Uo[i-1])
+    dUiMinus32 = utils.CalcUi(Uo[i-1], Uo[i-2])
 
-    alphaiPlus12 = sf.CalcAlpha(E[i+1], E[i], dUiPlus12,
-                                Uo[i+1], Uo[i])
-    alphaiMinus12 = sf.CalcAlpha(E[i], E[i-1], dUiMinus12,
-                                 Uo[i], Uo[i-1])
+    alphaiPlus12 = utils.CalcAlpha(E[i+1], E[i], dUiPlus12,
+                                   Uo[i+1], Uo[i])
+    alphaiMinus12 = utils.CalcAlpha(E[i], E[i-1], dUiMinus12,
+                                    Uo[i], Uo[i-1])
     # .............................................................
     # Calculate some variables required in Harten-Yee Upwind.
     # .............................................................
-    alphaiPlus32 = sf.CalcAlpha(E[i+2], E[i+1], dUiPlus32,
-                                Uo[i+2], Uo[i+1])
-    alphaiMinus32 = sf.CalcAlpha(E[i-1], E[i-2], dUiMinus32,
-                                 Uo[i-1], Uo[i-2])
+    alphaiPlus32 = utils.CalcAlpha(E[i+2], E[i+1], dUiPlus32,
+                                   Uo[i+2], Uo[i+1])
+    alphaiMinus32 = utils.CalcAlpha(E[i-1], E[i-2], dUiMinus32,
+                                    Uo[i-1], Uo[i-2])
 
     if not Limiter == 'G':
         raise TVDLimiterInputError(Limiter, "Harten-Yee Upwind TVD")
@@ -156,8 +141,8 @@ def HartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter):
     # Calculate function si(alpha + beta) in Equation 6-126
     abPlus = alphaiPlus12 + betaiPlus12
     abMinus = alphaiMinus12 + betaiMinus12
-    siPlus = sf.EntropyCorrectionFunction(abPlus, Eps)
-    siMinus = sf.EntropyCorrectionFunction(abMinus, Eps)
+    siPlus = utils.EntropyCorrectionFunction(abPlus, Eps)
+    siMinus = utils.EntropyCorrectionFunction(abMinus, Eps)
 
     # Calculate the flux limiter function, Equation 6-126
     phiPlus = (GiPlus1 + Gi) - siPlus*dUiPlus12
@@ -173,34 +158,22 @@ def ModifiedHartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter):
     using the Modified Harten-Yee Upwind TVD limiters.
 
     Call signature:
-
         ModifiedHartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter)
 
     Parameters
     ----------
-    i : int
-
+    i: int
         Integer value from the for loop to advance in space.
-
-    Uo : 1D or 2D array
-
-        The dependent variable from time level (n) within the domain.
-
-    E : 1D or 2D array
-
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    E: ndarray[float], =1D
         The flux vector for the non-linear term in the inviscid Burgers
-        equation, which is E = U^2/2
-
-    Eps : float
-
+        equation, which is E = U^2/2.
+    Eps: float
         A positive constant value within the range 0.0 and 0.125.
-
-    Courant : float
-
+    Courant: float
         Courant number (entered as user input in file).
-
-    Limiter : str
-
+    Limiter: str
         The limiter for the TVD function.
         Options available for Modified Harten-Yee Upwind TVD
         Limiters are
@@ -208,24 +181,21 @@ def ModifiedHartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter):
 
     Returns
     -------
-    phiPlus : float
-
+    phiPlus: float
         Flux limiter function at i+1/2 location.
-
-    phiMinus : float
-
+    phiMinus: float
         Flux limiter function at i-1/2 location.
     """
-    dUiPlus12 = sf.CalcUi(Uo[i+1], Uo[i])
-    dUiPlus32 = sf.CalcUi(Uo[i+2], Uo[i+1])
+    dUiPlus12 = utils.CalcUi(Uo[i+1], Uo[i])
+    dUiPlus32 = utils.CalcUi(Uo[i+2], Uo[i+1])
 
-    dUiMinus12 = sf.CalcUi(Uo[i], Uo[i-1])
-    dUiMinus32 = sf.CalcUi(Uo[i-1], Uo[i-2])
+    dUiMinus12 = utils.CalcUi(Uo[i], Uo[i-1])
+    dUiMinus32 = utils.CalcUi(Uo[i-1], Uo[i-2])
 
     # Equation 6-128
-    alphaiPlus12 = sf.CalcAlpha(E[i+1], E[i], dUiPlus12,
+    alphaiPlus12 = utils.CalcAlpha(E[i+1], E[i], dUiPlus12,
                                 Uo[i+1], Uo[i])
-    alphaiMinus12 = sf.CalcAlpha(E[i], E[i-1], dUiMinus12,
+    alphaiMinus12 = utils.CalcAlpha(E[i], E[i-1], dUiMinus12,
                                  Uo[i], Uo[i-1])
 
     # .............................................................
@@ -239,8 +209,8 @@ def ModifiedHartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter):
     GiMinus1 = tvd.LimiterforHYU(dUiMinus12, dUiMinus32, Limiter)
 
     # Calculate si(alpha) and sigma(si(alpha))
-    siAlphaP = sf.EntropyCorrectionFunction(alphaiPlus12, Eps)
-    siAlphaM = sf.EntropyCorrectionFunction(alphaiMinus12, Eps)
+    siAlphaP = utils.EntropyCorrectionFunction(alphaiPlus12, Eps)
+    siAlphaM = utils.EntropyCorrectionFunction(alphaiMinus12, Eps)
     sigmaP = 0.5*siAlphaP + Courant*alphaiPlus12*alphaiPlus12
     sigmaM = 0.5*siAlphaM + Courant*alphaiMinus12*alphaiMinus12
 
@@ -259,8 +229,8 @@ def ModifiedHartenYeeUpwind(i, Uo, E, Eps, Courant, Limiter):
     # Calculate function si(alpha + beta) in Equation 6-131
     abPlus = alphaiPlus12 + betaiPlus12
     abMinus = alphaiMinus12 + betaiMinus12
-    siPlus = sf.EntropyCorrectionFunction(abPlus, Eps)
-    siMinus = sf.EntropyCorrectionFunction(abMinus, Eps)
+    siPlus = utils.EntropyCorrectionFunction(abPlus, Eps)
+    siMinus = utils.EntropyCorrectionFunction(abMinus, Eps)
 
     # Calculate the flux limiter function, Equation 6-131
     phiPlus = sigmaP*(GiPlus1 + Gi) - siPlus*dUiPlus12
@@ -276,57 +246,42 @@ def RoeSwebyUpwind(i, Uo, E, Eps, Courant, Limiter):
     using the Roe-Sweby Upwind TVD limiters.
 
     Call signature:
-
         RoeSwebyUpwind(i, Uo, E, Eps, Courant, Limiter)
 
     Parameters
     ----------
-    i : int
-
+    i: int
         Integer value from the for loop to advance in space.
-
-    Uo : 1D or 2D array
-
-        The dependent variable from time level (n) within the domain.
-
-    E : 1D or 2D array
-
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    E: ndarray[float], =1D
         The flux vector for the non-linear term in the inviscid Burgers
-        equation, which is E = U^2/2
-
-    Eps : float
-
+        equation, which is E = U^2/2.
+    Eps: float
         A positive constant value within the range 0.0 and 0.125.
-
-    Courant : float
-
+    Courant: float
         Courant number (entered as user input in file).
-
-    Limiter : str
-
+    Limiter: str
         The limiter for the TVD function.
         Options available for Roe-Sweby Upwind TVD limiters are
         "G1", "G2", "G3".
 
     Returns
     -------
-    phiPlus : float
-
+    phiPlus: float
         Flux limiter function at i+1/2 location.
-
-    phiMinus : float
-
+    phiMinus: float
         Flux limiter function at i-1/2 location.
     """
-    dUiPlus12 = sf.CalcUi(Uo[i+1], Uo[i])
+    dUiPlus12 = utils.CalcUi(Uo[i+1], Uo[i])
 
-    dUiMinus12 = sf.CalcUi(Uo[i], Uo[i-1])
+    dUiMinus12 = utils.CalcUi(Uo[i], Uo[i-1])
 
     # Equation 6-128
-    alphaiPlus12 = sf.CalcAlpha(E[i+1], E[i], dUiPlus12,
-                                Uo[i+1], Uo[i])
-    alphaiMinus12 = sf.CalcAlpha(E[i], E[i-1], dUiMinus12,
-                                 Uo[i], Uo[i-1])
+    alphaiPlus12 = utils.CalcAlpha(E[i+1], E[i], dUiPlus12,
+                                   Uo[i+1], Uo[i])
+    alphaiMinus12 = utils.CalcAlpha(E[i], E[i-1], dUiMinus12,
+                                    Uo[i], Uo[i-1])
 
     # .............................................................
     # Calculate some variables required in Row-Sweby Upwind.
@@ -382,57 +337,42 @@ def DavisYeeSymmetric(i, Uo, E, Eps, Courant, Limiter):
     using the Davis-Yee Symmetric TVD limiters.
 
     Call signature:
-
         DavisYeeSymmetric(i, Uo, E, Eps, Courant, Limiter)
 
     Parameters
     ----------
-    i : int
-
+    i: int
         Integer value from the for loop to advance in space.
-
-    Uo : 1D or 2D array
-
-        The dependent variable from time level (n) within the domain.
-
-    E : 1D or 2D array
-
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    E: ndarray[float], =1D
         The flux vector for the non-linear term in the inviscid Burgers
-        equation, which is E = U^2/2
-
-    Eps : float
-
+        equation, which is E = U^2/2.
+    Eps: float
         A positive constant value within the range 0.0 and 0.125.
-
-    Courant : float
-
+    Courant: float
         Courant number (entered as user input in file).
-
-    Limiter : str
-
+    Limiter: str
         The limiter for the TVD function.
         Options available for Davis-Yee Symmetric TVD limiters
         are "G1", "G2", "G3".
 
     Returns
     -------
-    phiPlus : float
-
+    phiPlus: float
         Flux limiter function at i+1/2 location.
-
-    phiMinus : float
-
+    phiMinus: float
         Flux limiter function at i-1/2 location.
     """
-    dUiPlus12 = sf.CalcUi(Uo[i+1], Uo[i])
-    dUiPlus32 = sf.CalcUi(Uo[i+2], Uo[i+1])
+    dUiPlus12 = utils.CalcUi(Uo[i+1], Uo[i])
+    dUiPlus32 = utils.CalcUi(Uo[i+2], Uo[i+1])
 
-    dUiMinus12 = sf.CalcUi(Uo[i], Uo[i-1])
-    dUiMinus32 = sf.CalcUi(Uo[i-1], Uo[i-2])
+    dUiMinus12 = utils.CalcUi(Uo[i], Uo[i-1])
+    dUiMinus32 = utils.CalcUi(Uo[i-1], Uo[i-2])
 
-    alphaiPlus12 = sf.CalcAlpha(E[i+1], E[i], dUiPlus12,
+    alphaiPlus12 = utils.CalcAlpha(E[i+1], E[i], dUiPlus12,
                                 Uo[i+1], Uo[i])
-    alphaiMinus12 = sf.CalcAlpha(E[i], E[i-1], dUiMinus12,
+    alphaiMinus12 = utils.CalcAlpha(E[i], E[i-1], dUiMinus12,
                                  Uo[i], Uo[i-1])
 
     # .............................................................
@@ -445,8 +385,8 @@ def DavisYeeSymmetric(i, Uo, E, Eps, Courant, Limiter):
                                   Limiter)
 
     # Calculate function si(alpha) in Equation 6-141
-    siPlus = sf.EntropyCorrectionFunction(alphaiPlus12, Eps)
-    siMinus = sf.EntropyCorrectionFunction(alphaiMinus12, Eps)
+    siPlus = utils.EntropyCorrectionFunction(alphaiPlus12, Eps)
+    siMinus = utils.EntropyCorrectionFunction(alphaiMinus12, Eps)
     # Calculate the flux limiter function, Equation 6-141
     phiPlus = -((Courant*alphaiPlus12**2*GiPlus12)
                 + (siPlus*(dUiPlus12 - GiPlus12)))

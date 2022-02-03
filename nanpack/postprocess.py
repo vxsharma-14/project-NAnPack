@@ -5,13 +5,13 @@
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -43,31 +43,23 @@ def DimensionalizeSolution(Ustar, RefLength, Diff):
     """Return the dimensional values of the velocity.
 
     Using the expression:
-
         u = (u*)(nu/L)
 
     Call signature:
-
         DimensionalizeSolution(Ustar, RefLength, Diff)
 
     Parameters
     ----------
-    Ustar : 1D or 2D array
-
+    Ustar: ndarray[float], =1d
         Non-dimensional velocities.
-
     RefLength: float
-
         Reference or characteristic length.
-
     Diff: float
-
         Diffusion coefficient.
 
     Returns
     -------
-    Udim : 1D or 2D araay
-
+    Udim: ndarray[float], =1d
         Dimensional velocities.
     """
     from .backend.dimensionalize import NonDimensionalize
@@ -80,7 +72,6 @@ def ComputeErrorTerm(uAna, uNum, ReturnType="abs"):
     """Return the error term to calculate accuracy of a numerical scheme.
 
     Calculated using one of the following expression:
-
         Absolute Error Term = abs(U_analytical - U_numerical)
 
                         U_analytical - U_numerical
@@ -88,23 +79,17 @@ def ComputeErrorTerm(uAna, uNum, ReturnType="abs"):
                               U_numerical
 
     Call signature:
-
         ComputeErrorTerm(uAna, uNum)
 
     Parameters
     ----------
-    uAna: 1D or 2D array
-
+    uAna: ndarray[float], =1d
         The values of the dependent variable obtained from the known exact
         solution within the entire domain.
-
-    uNum: 1D or 2D array
-
+    uNum: ndarray[float], =1d
         The values of the dependent variable calculated using an
         approximation method within the entire domain.
-
     ReturnType: str, Default="abs"
-
         Allowed inputs = "%" or "abs"
         Specify the return type of error term. It can be calculated as a
         percentage difference
@@ -114,8 +99,7 @@ def ComputeErrorTerm(uAna, uNum, ReturnType="abs"):
 
     Returns
     -------
-    ErrorTerm: 1D or 2D array
-
+    ErrorTerm: ndarray[float], =1d
         Error term.
     """
     shapeU = uNum.shape  # Obtain Dimension
@@ -125,13 +109,13 @@ def ComputeErrorTerm(uAna, uNum, ReturnType="abs"):
         ErrorTerm[:] = abs(uAna[:] - uNum[:])
         if ReturnType == "%":
             ErrorTerm[:] = (ErrorTerm[:]/uAna[:])*100.0
+        return ErrorTerm
 
     elif len(shapeU) == 2:
         ErrorTerm[:, :] = abs(uAna[:, :] - uNum[:, :])
         if ReturnType == "%":
             ErrorTerm[:, :] = (ErrorTerm[:, :]/uAna[:, :])*100.0
-
-    return ErrorTerm
+        return ErrorTerm
 
 
 def FourthOrderDamping(U, DampCoeff):
@@ -140,24 +124,19 @@ def FourthOrderDamping(U, DampCoeff):
     Calculated using Equation 6-77 in CFD Vol. 1 by Hoffmann.
 
     Call signature:
-
         FourthOrderDamping(U, DampCoeff)
 
     Parameters
     ----------
-    U : 1D or 2D array
-
-        The dependent variable from time level (n) within the domain.
-
-    DampCoeff : float
-
+    U: ndarray[float], =1d
+        The dependent variable at time level, n within the entire domain.
+    DampCoeff: float
         Damping coefficient. The value must be selected in the range of
         0 to 0.125 for a stable solution.
 
     Returns
     -------
-    D : 1D or 2D array
-
+    D: ndarray[float], =1d
         The fourth-order damping term within the entire domain.
     """
     D = U.copy()  # Initialize D
@@ -174,23 +153,18 @@ def SecondOrderDamping(U, DampCoeff):
     Calculated using Equation 6-80 in CFD Vol. 1 by Hoffmann.
 
     Call signature:
-
         SecondOrderDamping(U, DampCoeff)
 
     Parameters
     ----------
-    U : 1D or 2D array
-
-        The dependent variable from time level (n) within the domain.
-
+    U: ndarray[float], =1d
+        The dependent variable at time level, n within the entire domain.
     DampCoeff: float
-
         Damping coefficient.
 
     Returns
     -------
-    D : 1D or 2D array
-
+    D: ndarray[float], =1d
         The second-order damping term within the entire domain.
     """
     D = U.copy()  # Initialize D
@@ -204,12 +178,12 @@ def LInfNormError(U, Uold):
     if len(shapeU) == 2:  # Dimension = 2D
         Abs_err = abs(Uold[1:, 1:] - U[1:, 1:]).sum(axis=1)
         Error = max(Abs_err)
+        return Error
 
     elif len(shapeU) == 1:  # Dimension = 1D
         Abs_err = abs(Uold[1:] - U[1:]).sum(axis=1)
         Error = max(Abs_err)
-
-    return Error
+        return Error
 
 
 def AbsoluteError(U, Uold):
@@ -233,11 +207,11 @@ def AbsoluteError(U, Uold):
     shapeU = U.shape  # Obtain shape for Dimension
     if len(shapeU) == 2:  # Dimension = 2D
         Error = abs(Uold[1:-1, 1:-1] - U[1:-1, 1:-1]).sum()
+        return Error
 
     elif len(shapeU) == 1:  # Dimension = 1D
         Error = abs(Uold[1:-1] - U[1:-1]).sum()
-
-    return Error
+        return Error
 
 
 def MonitorConvergence(CfgClsObj, n, Error):
@@ -245,17 +219,14 @@ def MonitorConvergence(CfgClsObj, n, Error):
 
     Parameters
     ----------
-    CfgClsObj :
-
+    CfgClsObj:
         Class object of RunConfig class which was created at the beginning
         of the simulation. Users may also define a new class containing all
         the user-defined paramaters and create an object for the user-
         defined class and provide the object as a parameter of CfgClsObj in
         WriteConvHistToFile function.
-
     n: int
         Current time-step or iteration level.
-
     Error: float
         Convergence log at each iteration level calculated in terms of
         absolute error or L2 inf error.
@@ -277,34 +248,24 @@ def WriteSolutionToFile(U, n, nWrite, nMax, OutFileName, dX, dY=None):
     """Write simulation results of the entire domain to output file.
 
     Call Signature:
-
         WriteSolutionToFile(U, n, nWrite, nMax, OutFileName, dX, dY=None)
 
     Parameters
     ----------
-    U : 1D or 2D array, float
-
+    U: ndarray[float], =1d, 2d
         Solution of the dependent variable to be stored.
-
-    n : int
-
+    n: int
         Iteration level/time step level.
-
-    nWrite : int
-
+    nWrite: int
         After every nWrite values, the solution is stored in the files.
-        This helps saving computational processing requirements at every
+        This helps to save computational processing requirements at every
         time step or iteration level. This value is provided as the user
         input in the configuration file.
-
-    nMax : int
-
+    nMax: int
         Maximum allowed time-step or iterations at which the solution is
         stopped. This value is provided as the user input in the
         configuration file.
-
-    OutFileName : str, Default=None.
-
+    OutFileName: str, Default=None.
         File name to store numerical solutions.
     """
     if n % nWrite == 0 or n == nMax:
@@ -336,29 +297,21 @@ def WriteConvHistToFile(CfgClsObj, n, Error, HistFName=None):
     """Write convergence history log.
 
     Call Signature:
-
         WriteConvHistToFile(CfgClsObj, n, Error, HistFName=None)
 
     Parameters
     ----------
-    CfgClsObj :
-
+    CfgClsObj:
         Class object of RunConfig class which was created at the beginning
         of the simulation. Users may also define a new class containing all
         the user-defined paramaters and create an object for the user-
         defined class and provide the object as a parameter of CfgClsObj in
         WriteConvHistToFile function.
-
-    n : int
-
+    n: int
         Iteration level (time level).
-
-    Error : float
-
+    Error: float
         Error in the solution at each iteration level.
-
-    HistFName : str, Default=None
-
+    HistFName: str, Default=None
         File name to store log of convergence history.
     """
     if not HistFName:
@@ -423,25 +376,19 @@ def WriteSolutionIn1DFormat(CfgClsObj, U, Out1DFName=None):
     """Write 2D output data in 1D format at locations of X or Y.
 
     Call Signature:
-
         WriteSolutionIn1DFormat(CfgClsObj, U)
 
     Parameters
     ----------
-    CfgClsObj :
-
+    CfgClsObj:
         Class object of RunConfig class which was created at the beginning
         of the simulation. Users may also define a new class containing all
         the user-defined paramaters and create an object for the user-
         defined class and provide the object as a parameter of CfgClsObj in
         WriteConvHistToFile function.
-
-    U : 2D array, float
-
+    U: ndarray[float], =2d
         Solution of the dependent variable to be stored.
-
-    Out1DFName : str, Default=None.
-
+    Out1DFName: str, Default=None.
         File name to save output.
     """
     if not Out1DFName:
@@ -469,7 +416,7 @@ def WriteSolutionIn1DFormat(CfgClsObj, U, Out1DFName=None):
                 # store in one line
                 line.append(U[i][j])
                 # Convert "line" list elements to float & format the output
-                lines = ["{0:12.8f}".format(float(li)) for li in (line)]
+                lines = ["{0:12.8f}".format(float(li)) for li in line]
             print(f"{CfgClsObj.dY*j:<8.4f}", *lines, sep=' ', file=OutFile)
 
     elif CfgClsObj.Direction.upper() == "Y":
@@ -486,7 +433,7 @@ def WriteSolutionIn1DFormat(CfgClsObj, U, Out1DFName=None):
                 # store in one line
                 line.append(U[i][j])
                 # Convert "line" list elements to float & format the output
-                lines = ["{0:12.8f}".format(float(li)) for li in (line)]
+                lines = ["{0:12.8f}".format(float(li)) for li in line]
             print(f"{CfgClsObj.dX*i:<8.4f}", *lines, sep=' ', file=OutFile)
 
     print("Writing output in 1D format: Completed.")
@@ -505,17 +452,14 @@ def Plot1DResults(dataFiles, **kwargs):
     assigned.
 
     Call Signature:
-
         Plot1DResults(dataFiles, **kwargs)
 
     Parameters
     ----------
     dataFiles: str list
-
         Provide path of the saved files as a list. Function will read and
         plot the stored data in these files. Atleast one file input is
         required.
-
     **kwargs = [
         uAxis,
         Legend,
@@ -523,11 +467,12 @@ def Plot1DResults(dataFiles, **kwargs):
         useFileCol,
         Title,
         xLabel,
-        yLabel
+        yLabel,
         ]
 
+    Keyword Arguments
+    -----------------
     uAxis: str, default="X"
-
         Provide the axis of U on the plot. Allowed values are "X" or "Y"
         string.
         If
@@ -540,42 +485,31 @@ def Plot1DResults(dataFiles, **kwargs):
             -----------
         the numerical solution will be plotted on the Y-axis as a function
         of values on X-axis.
-
     Legend: str list, Default=None
-
         String list to display legends in the plot. Optional.
         Plot legends are a useful tool to make the plots informative.
         If Legend is provided, the length of the Legend list must be
         equal to or greater than the length of dataFiles.
 
     Markers: str list, Default=None
-
         List of markers. Optional. The allowed markers are given in
         matplotlib documentation. The Plot1DResults make use of the
         matplotlib marker, markevery, markersize features.
         If Markers is provided, the length of the Markers list must be
         equal to or greater than the length of dataFiles.
-
     useFileCol: int, Default=1
-
         Column number of the data stored in the file to plot.
         If not provided, the column number 1 will be plotted versus
         column number 0.
-
     Title: str, Default=None
-
         Title text of the plot.
-
     xLabel: str, Default=None
-
         X-axis label in the plot.
-
     yLabel: str, Default=None
-
         Y-axis label in the plot.
     """
     from os import path
-    from .backend._plots import _Plot1D
+    from .backend.plots import Plot1D
     from .backend.exceptions import InputFileError
 
     uAxis = kwargs.get("uAxis", "X")
@@ -602,8 +536,8 @@ def Plot1DResults(dataFiles, **kwargs):
                        "D", "h"]
         else:
             markers = markers
-    _Plot1D(dataFiles, uAxis, legend, markers, useFileCol, title,
-            xlbl, ylbl)
+    Plot1D(dataFiles, uAxis, legend, markers, useFileCol, title,
+           xlbl, ylbl)
 
 
 def Plot2DResults(dataFiles, **kwargs):
@@ -615,25 +549,14 @@ def Plot2DResults(dataFiles, **kwargs):
     assigned.
 
     Call Signature:
-
         Plot2DResults(dataFiles, iMax, jMax, **kwargs)
 
     Parameters
     ----------
     dataFiles: str list
-
         Provide path of the saved files as a list. Function will read and
         plot the stored data in these files. Atleast one file input is
         required.
-
-    iMax: int
-
-        Number of grid points along X-axis.
-
-    jMax: int
-
-        Number of grid points along Y-axis.
-
     **kwargs = [
         Title,
         xLabel,
@@ -641,14 +564,15 @@ def Plot2DResults(dataFiles, **kwargs):
         cbarLabel,
         nPlots,
         nRow,
-        nCol
+        nCol,
         cMap,
         Shading,
-        PlotType
+        PlotType,
         ]
 
+    Keyword Arguments
+    -----------------
     uAxis: str, default="X"
-
         Provide the axis of U on the plot. Allowed values are "X" or "Y"
         string.
         If
@@ -661,43 +585,31 @@ def Plot2DResults(dataFiles, **kwargs):
             -----------
         the numerical solution will be plotted on the Y-axis as a function
         of values on X-axis.
-
     Legend: str list, Default=None
-
         String list to display legends in the plot. Optional.
         Plot legends are a useful tool to make the plots informative.
         If Legend is provided, the length of the Legend list must be
         equal to or greater than the length of dataFiles.
-
     Markers: str list, Default=None
-
         List of markers. Optional. The allowed markers are given in
         matplotlib documentation. The Plot1DResults make use of the
         matplotlib marker, markevery, markersize features.
         If Markers is provided, the length of the Markers list must be
         equal to or greater than the length of dataFiles.
-
     useFileCol: int, Default=1
-
         Column number of the data stored in the file to plot.
         If not provided, the column number 1 will be plotted versus
         column number 0.
-
     Title: str, Default=None
-
         Title text of the plot.
-
     xLabel: str, Default=None
-
         X-axis label in the plot.
-
     yLabel: str, Default=None
-
         Y-axis label in the plot.
     """
     from os import path
     import warnings
-    from .backend._plots import _Plot2D, _MultiPlot2D
+    from .backend.plots import Plot2D, MultiPlot2D
     from .backend.exceptions import InputFileError
 
     countFiles = len(dataFiles)
@@ -715,7 +627,7 @@ def Plot2DResults(dataFiles, **kwargs):
     cLevel = kwargs.get("cLevel", None)
     Alpha = kwargs.get("Alpha", 0.5)
 
-    if (countFiles) > 1 and nPlots == 1:
+    if countFiles > 1 and nPlots == 1:
         warnings.warn("More than one files input found for 1 plot.\
  Plotting data from the first file.")
     else:
@@ -724,14 +636,16 @@ def Plot2DResults(dataFiles, **kwargs):
                 raise InputFileError("FileNotfound", dataFiles)
 
     if nPlots == 1:
-        _Plot2D(dataFiles[0], pTitle, xLabel, yLabel, cbarLbl, PlotType,
-                cMap, Shading, cLevel, Alpha)
+        Plot2D(dataFiles[0], pTitle, xLabel, yLabel, cbarLbl, PlotType,
+               cMap, Shading, cLevel, Alpha)
     elif nPlots > 1:
         # Set title arrays for multiple plots
         if isinstance(pTitle, str) is True:
             title = [pTitle for i in range(nPlots)]
         elif len(pTitle) == nPlots:
             title = pTitle
-        _MultiPlot2D(nPlots, nRow, nCol, dataFiles, title,
-                     xLabel, yLabel, cbarLbl, PlotType, cMap,
-                     Shading, cLevel, Alpha)
+        else:
+            raise Exception("Error in the plot title input.")
+        MultiPlot2D(nPlots, nRow, nCol, dataFiles, title,
+                    xLabel, yLabel, cbarLbl, PlotType, cMap,
+                    Shading, cLevel, Alpha)

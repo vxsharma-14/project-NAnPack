@@ -45,13 +45,13 @@ or,
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -89,29 +89,24 @@ def ExplicitFirstUpwind(cfg, Uo, Courant):
     first-order 1D wave equation or inviscid Burgers equation.
 
     Call signature:
-
         FirstOrderUpwind(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     import numpy as np
@@ -144,29 +139,24 @@ def Lax(cfg, Uo, Courant):
     first-order 1D wave equation or inviscid Burgers equation.
 
     Call signature:
-
         Lax(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -196,29 +186,24 @@ def MidpointLeapfrog(cfg, Uo, Courant):
     first-order 1D wave equation or inviscid Burgers equation.
 
     Call signature:
-
         MidpointLeapfrog(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -244,29 +229,24 @@ def LaxWendroff(cfg, Uo, Courant):
     first-order 1D wave equation or inviscid Burgers equation.
 
     Call signature:
-
         LaxWendroff(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -301,29 +281,24 @@ def LaxWendroffMultiStep(cfg, Uo, Courant):
     first-order 1D wave equation.
 
     Call signature:
-
         LaxWendroffMultiStep(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -337,12 +312,11 @@ def LaxWendroffMultiStep(cfg, Uo, Courant):
         for i in range(1, iMax-1):
             Uhalf[i] = 0.5*(Uo[i+1]+Uo[i]) - 0.5*Courant*(Uo[i+1]-Uo[i])
             U[i] = Uo[i] - Courant*(Uhalf[i]-Uhalf[i-1])
+        return U
 
     elif cfg.Model.upper() == "INV_BURGERS":
         raise Exception("This formulation is not available for BURGERS\
  equation in this version.")
-
-    return U
 
 
 def MacCormack(cfg, Uo, Courant, diffX=None):
@@ -353,29 +327,24 @@ def MacCormack(cfg, Uo, Courant, diffX=None):
     first-order 1D wave equation or inviscid/viscous Burgers equation.
 
     Call signature:
-
         MacCormack(cfg, Uo, Courant, diffX)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -411,29 +380,24 @@ def FourthOrderRungeKutta(cfg, Uo, Courant):
     first-order 1D wave equation or inviscid Burgers equation.
 
     Call signature:
-
         FourthOrderRungeKutta(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -488,7 +452,7 @@ def FourthOrderRungeKutta(cfg, Uo, Courant):
     return U
 
 
-def ModifiedRungeKutta(cfg, Uo, Courant, diffX):
+def ModifiedRungeKutta(cfg, Uo, Courant):
     """Return the numerical solution of dependent variable in the model eq.
 
     This routine uses the explicit four-stage Modified Runge-Kutta method
@@ -496,29 +460,24 @@ def ModifiedRungeKutta(cfg, Uo, Courant, diffX):
     first-order 1D wave equation or inviscid/viscous Burgers equation.
 
     Call signature:
-
         ModifiedRungeKutta(cfg, Uo, Courant, diffX)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -561,7 +520,7 @@ def ModifiedRungeKutta(cfg, Uo, Courant, diffX):
     return U
 
 
-def EulersBTCS(cfg, Uo, Courant, diffX=None):
+def EulersBTCS(cfg, Uo, Courant):
     """Return the numerical solution of dependent variable in the model eq.
 
     This routine uses the  implicit Euler's Backward Time Central Space
@@ -570,29 +529,24 @@ def EulersBTCS(cfg, Uo, Courant, diffX=None):
     first-order 1D wave equation or non-linear viscous Burgers equation.
 
     Call signature:
-
         EulersBTCS(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -625,29 +579,24 @@ def CrankNicolson(cfg, Uo, Courant):
     first-order 1D wave equation.
 
     Call signature:
-
         CrankNicolson(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -667,11 +616,11 @@ def CrankNicolson(cfg, Uo, Courant):
 
         U = TridiagonalSolver(iMax, A, B, C, D, UU)
 
+        return U
+
     elif cfg.Model.upper() == "INV_BURGERS":
         raise Exception("This formulation is not available for BURGERS\
  equation in this version.")
-
-    return U
 
 
 def BeamAndWarming(cfg, Uo, Courant):
@@ -682,29 +631,24 @@ def BeamAndWarming(cfg, Uo, Courant):
     first-order 1D wave equation or inviscid Burgers equation.
 
     Call signature:
-
         BeamAndWarming(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
@@ -735,7 +679,7 @@ def BeamAndWarming(cfg, Uo, Courant):
 
         U = TridiagonalSolver(iMax, A, B, C, D, UU)
 
-    return U
+        return U
 
 
 def FirstOrderTVD(cfg, Uo, Courant):
@@ -746,32 +690,27 @@ def FirstOrderTVD(cfg, Uo, Courant):
     first-order inviscid Burgers equation.
 
     Call signature:
-
         FirstOrderTVD(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U : ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
-    import nanpack.secondaryfunctions as sec
+    import nanpack.utils as utils
 
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 2:
@@ -787,8 +726,8 @@ def FirstOrderTVD(cfg, Uo, Courant):
         # Utemp = Uo.copy()
         E = Uo*Uo/2
         for i in range(1, iMax-1):
-            dUiPlus12 = sec.CalcUi(Uo[i+1], Uo[i])
-            dUiMinus12 = sec.CalcUi(Uo[i], Uo[i-1])
+            dUiPlus12 = utils.CalcUi(Uo[i+1], Uo[i])
+            dUiMinus12 = utils.CalcUi(Uo[i], Uo[i-1])
             # -- Calculate alpha(i+1/2) using equation 6-98
             if dUiPlus12 == 0:
                 alphaiPlus12 = Uo[i]
@@ -806,7 +745,7 @@ def FirstOrderTVD(cfg, Uo, Courant):
             Utemp = Uo[i] - 0.5*Courant*(E[i+1]-E[i-1])
             U[i] = Utemp + 0.5*Courant*(phiPlus-phiMinus)
 
-    return U
+        return U
 
 
 def SecondOrderTVD(cfg, Uo, Courant, LimiterFunc, Limiter, Eps=0.1):
@@ -818,42 +757,31 @@ def SecondOrderTVD(cfg, Uo, Courant, LimiterFunc, Limiter, Eps=0.1):
     first-order inviscid Burgers equation.
 
     Call signature:
-
         SecondOrderTVD(cfg, Uo, Courant)
 
     Parameters
     ----------
-    cfg :
-
-        Class object of RunConfig class which was created at the
-        beginning of the simulation.
-
-    Uo : 1D array
-
-        The dependent variable from time level (n) within the domain.
-
-    Courant : float
-
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the domain.
+    Courant: float
         Courant number that appears in the convection component of the PDE.
-
     LimiterFunc: str
-
         Flux limiter function.
-
-    Limiter:
-
+    Limiter: str
         Limiter type.
-
     Eps: float, Default=0.1
-
         A positive constant in the entropy correction term, si in Eq. 6-127
         in CFD Vol. 1 by Hoffmann. Its value must be between 0 and 0.125.
 
     Returns
     -------
-    U : 1D array
-
-        The dependent variable calculated at time level (n+1) within the
+    U: ndarray[float], =1d
+        The dependent variable calculated at time level, n+1 within the
         entire domain.
     """
     from .tvdfunctions import CalculateTVD
@@ -901,15 +829,15 @@ def SecondOrderTVD(cfg, Uo, Courant, LimiterFunc, Limiter, Eps=0.1):
     first-order 1D wave equation.
 
     Call signature:
-
         FluxCorrectedTransport(cfg, Uo, Courant, Damp1, Damp2)
 
     Parameters
     ----------
-    cfg :
-
-           Class object of RunConfig class which was created at the
-           beginning of the simulation.
+    cfg:
+        Class object of RunConfig class which was created at the beginning
+        of the simulation. Users may also define a new class containing all
+        the user-defined paramaters and create an object for the user-
+        defined class and provide the object as an input argument.
 
     Uo : 1D array
 

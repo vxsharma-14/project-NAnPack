@@ -5,13 +5,13 @@
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -125,11 +125,11 @@ def LimiterGforHYU(alpha1, alpha2, dU1, dU2, Courant, Ep):
     function given by Equation 6-126.
     Calculated using Equation 6-130 in CFD Vol. 1 by Hoffmann.
     """
-    import nanpack.secondaryfunctions as sf
+    import nanpack.utils as utils
 
     # Calculate si(alpha) in sigma and S
-    siAlpha1 = sf.EntropyCorrectionFunction(alpha1, Ep)
-    siAlpha2 = sf.EntropyCorrectionFunction(alpha2, Ep)
+    siAlpha1 = utils.EntropyCorrectionFunction(alpha1, Ep)
+    siAlpha2 = utils.EntropyCorrectionFunction(alpha2, Ep)
     # Calculate sigma
     sigma1 = 0.5*(siAlpha1 - Courant*alpha1*alpha1)
     sigma2 = 0.5*(siAlpha2 - Courant*alpha2*alpha2)

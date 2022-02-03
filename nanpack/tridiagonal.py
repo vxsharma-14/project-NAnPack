@@ -5,13 +5,13 @@
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -43,7 +43,7 @@ def TridiagonalSolver(tMax, A, B, C, D, UU):
     """Solve a tridiagonal matrix for a system of linear equations.
 
     The function is used by implicit methods for the obtaining the
-    numerical of solution of PDEs. The approach to solve
+    numerical solution of PDEs. The approach to solve
     such a system is given in Appendix B of CFD Vol. 1 by Klaus Hoffmann.
 
     The formulation for the implicit methods is of the form:
@@ -51,42 +51,29 @@ def TridiagonalSolver(tMax, A, B, C, D, UU):
     A(i,n)U(i-1,n+1) + B(i,n)U(i,n+1) + C(i,n)U(i+1,n+1) = D(i,n)
 
     Call signature:
-
-        TridiagonalSolver(U, diffX, diffY)
+        TridiagonalSolver(tMax, A, B, C, D, UU)
 
     Parameters
     ----------
-    tMax : int
-
+    tMax: int
         Grid points in a given axis direction.
-
-    A : 1D array
-
+    A: ndarray[float], =1d
         Coefficient of u(i-1, n+1) in the implicit formulation.
-
-    B : 1D array
-
+    B: ndarray[float], =1d
         Coefficient of u(i, n+1) in the implicit formulation.
-
-    C : 1D array
-
+    C: ndarray[float], =1d
         Coefficient of u(i+1, n+1) in the implicit formulation.
-
-    D : 1D array
-
-        Right hand side equations in the implicit formulation.
-
-    UU : 1D array
-
-        The dependent variable at time level (n) within the domain
+    D: ndarray[float], =1d
+        Right-hand side equations in the implicit formulation.
+    UU: ndarray[float], =1d
+        The dependent variable at time level, n
         along a given axis as required by the implicit method.
 
     Returns
     -------
-    UU : 1D array
-
-        The dependent variable within the domain calculated using
-        equation (B-5) in CFD Vol.1 by Klaus Hoffmann.
+    UU: ndarray[float], =1d
+        The dependent variable at time level, n+1 within the entire domain
+        calculated using equation (B-5) in CFD Vol.1 by Klaus Hoffmann.
     """
     H = [0 for t in range(tMax)]  # initialize H
     G = [0 for t in range(tMax)]  # initialize G

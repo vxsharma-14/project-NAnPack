@@ -11,7 +11,7 @@
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2021 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -139,9 +139,9 @@ def RectangularMesh(dX, iMax, dY=None, jMax=None):
 
     Returns
     -------
-    X: array[float], <=2d
+    X: ndarray[float], <=2d
         Returns X coordinates at each grid points locations.
-    Y: array[float], <=2d
+    Y: ndarray[float], <=2d
         Returns Y coordinates at each grid points locations. Returns 0 for
         1D applications.
     """
@@ -156,7 +156,7 @@ def RectangularMesh(dX, iMax, dY=None, jMax=None):
                 Y[i][j] = j*dY
         return X, Y
     else:
-        X = np.zeros((iMax), dtype="float")
+        X = np.zeros(iMax, dtype="float")
         for i in range(0, iMax):
             X[i] = i*dX
         return X
@@ -189,8 +189,8 @@ def StructuredMesh1D(ClustLoc, ClustOpt=True, Alpha=None, Beta=None,
 
 def _getMesh1D(clust_loc, Xi, dX, iM, alpha, beta):
     """Get X and Y coordinate locations within the user specified grid."""
-    from .backend.mesh1d import _meshing_func
-    X = _meshing_func(clust_loc, Xi, dX, iM, alpha, beta)
+    from .backend.mesh1d import meshing_func
+    X = meshing_func(clust_loc, Xi, dX, iM, alpha, beta)
     return X
 
 
@@ -203,36 +203,36 @@ def StructuredMesh(GeomTemplate, ClustOpt=True, CfgClsObj=None,
     print("Calculating X and Y locations of all grid points within\
  the mesh.")
     rect_grid_types = ["flat-plate", "duct", "cavity"]
+    if CfgClsObj is None:
+        dX = mesh_kwargs.get("dX", None)
+        dY = mesh_kwargs.get("dY", None)
+        iM = mesh_kwargs.get("iM", None)
+        jM = mesh_kwargs.get("jM", None)
+    else:
+        dX = CfgClsObj.dX
+        dY = CfgClsObj.dY
+        iM = CfgClsObj.iM
+        jM = CfgClsObj.jM
     if GeomTemplate.lower() in rect_grid_types and ClustOpt is False:
-        if CfgClsObj is None:
-            dX = mesh_kwargs.get("dX", None)
-            dY = mesh_kwargs.get("dY", None)
-            iM = mesh_kwargs.get("iM", None)
-            jM = mesh_kwargs.get("jM", None)
-        else:
-            dX = CfgClsObj.dX
-            dY = CfgClsObj.dY
-            iM = CfgClsObj.iM
-            jM = CfgClsObj.jM
         X, Y = RectangularMesh(dX, iM, dY, jM)
     else:
-        X, Y = _getMesh(iM, jM, GeomTemplate, ClustOpt, CfgClsObj,
-                        **mesh_kwargs)
+        X, Y = getMesh(iM, jM, GeomTemplate, ClustOpt, CfgClsObj,
+                       **mesh_kwargs)
     return X, Y
 
 
-def _getMesh(iM, jM, geo_temp, clust_option, CfgObject, **mesh_kw):
+def getMesh(iM, jM, geo_temp, clust_option, CfgObject, **mesh_kw):
     """Get X and Y coordinate locations within the user specified grid."""
-    from .backend.mesh2d import _meshing_func
-    X, Y = _meshing_func(iM, jM, geo_temp, clust_option, CfgObject,
-                         **mesh_kw)
+    from .backend.mesh2d import meshing_func
+    X, Y = meshing_func(iM, jM, geo_temp, clust_option, CfgObject,
+                        **mesh_kw)
     return X, Y
 
 
 def CalcMeshMetrics(X, Y):
     """Calculate metrics and Jacobian of the transformation."""
-    from .backend.meshmetrics import _metrics_2d
-    XiX, XiY, EtaX, EtaY, JJ = _metrics_2d(X, Y)
+    from .backend.meshmetrics import metrics_2d
+    XiX, XiY, EtaX, EtaY, JJ = metrics_2d(X, Y)
     print("Grid metrics and Jacobian evaluation: Completed.")
     return XiX, XiY, EtaX, EtaY, JJ
 
@@ -240,32 +240,33 @@ def CalcMeshMetrics(X, Y):
 def CalcMeshMetrics1D(X):
     """Calculate metrics and Jacobian of the transformation."""
     from .backend import meshmetrics
-    XiX, JJ = meshmetrics._metrics_1d(X)
+    XiX, JJ = meshmetrics.metrics_1d(X)
     print("Grid metrics and Jacobian evaluation: Completed.")
+    return XiX, JJ
 
 
 def PlotMeshMetrics(XiX, XiY, EtaX, EtaY, x=None, y=None):
     """Plot metrics data."""
-    from .backend.plotmetrics import _plot_metrics_2d
-    _plot_metrics_2d(XiX, XiY, EtaX, EtaY, x, y)
+    from .backend.plotmetrics import plot_metrics_2d
+    plot_metrics_2d(XiX, XiY, EtaX, EtaY, x, y)
 
 
 def SaveMeshMetrics(X, Y, XiX, XiY, EtaX, EtaY, JJ, MetFName):
     """Save metrics data to an output file."""
-    from .backend.writefiles import _save_metrics_2d
-    _save_metrics_2d(X, Y, XiX, XiY, EtaX, EtaY, JJ, MetFName)
+    from .backend.writefiles import save_metrics_2d
+    save_metrics_2d(X, Y, XiX, XiY, EtaX, EtaY, JJ, MetFName)
 
 
 def SaveMeshMetrics1D(X, XiX, JJ, MetFName):
     """Save metrics data to an output file."""
-    from .backend.writefiles import _save_metrics_1d
-    _save_metrics_1d(X, XiX, JJ, MetFName)
+    from .backend.writefiles import save_metrics_1d
+    save_metrics_1d(X, XiX, JJ, MetFName)
 
 
 def PlotMesh(X, Y):
     """Plot grid data."""
-    from .backend.plotmetrics import _plot_grid
-    _plot_grid(X, Y)
+    from .backend.plotmetrics import plot_grid
+    plot_grid(X, Y)
 
 
 def CalcTimeStep(CFL, diff, conv, dX, dY, Dimension, Model):
@@ -281,7 +282,7 @@ def CalcTimeStep(CFL, diff, conv, dX, dY, Dimension, Model):
             diffusion number for diffusion equations, and
             Courant number for the convection equations.
             Caution: This is not a true numerical definition of CFL though.
-    diff : float
+    diff: float
         Physics specific coefficient in the diffusion model.
         For example, kinematic viscosity or thermal diffusivity.
     conv: float

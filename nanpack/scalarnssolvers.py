@@ -38,7 +38,7 @@ The equation is non-dimensionalized using the following expression:
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2021 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -64,8 +64,6 @@ The equation is non-dimensionalized using the following expression:
 #   NAnPack Learner's Edition.
 #
 #   ***********************************************************************
-import numpy as np
-
 from .tridiagonal import TridiagonalSolver
 from .backend.exceptions import DimensionError
 
@@ -485,7 +483,7 @@ def SecondOrderTVD(Uo, Courant, diffX, LimiterFunc, Limiter, Eps=0.01):
         hPlus = 0.5 * (E[i+1]+E[i]+phiPlus)
         hMinus = 0.5 * (E[i]+E[i-1]+phiMinus)
 
-        # Calculate diffusion terms in the viscous Bergers equation
+        # Calculate diffusion terms in the viscous Bergers equation.
         # Equation 7-58
         diffusion = diffX*(Uo[i+1] - 2.0*Uo[i] + Uo[i-1])
 

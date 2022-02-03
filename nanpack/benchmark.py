@@ -10,13 +10,13 @@ numerical methods.
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -203,7 +203,6 @@ def HeatConduction(X, Y, T1, T2, T3, T4, Inf):
     print("Calculating analytical solution: Completed.")
 
     return TAnaly
-#   ***********************************************************************
 
 
 def ParallelPlateFlow(Uref, X, nu, t, Inf):
@@ -239,9 +238,9 @@ def ParallelPlateFlow(Uref, X, nu, t, Inf):
 
     iM, = X.shape
 
-    Ua = np.zeros((iM))
-    Ua1 = np.zeros((iM))
-    Ua2 = np.zeros((iM))
+    Ua = np.zeros(iM)
+    Ua1 = np.zeros(iM)
+    Ua2 = np.zeros(iM)
 
     eta1 = X[-1]/(2*math.sqrt(nu*t))
     m = 0
@@ -288,5 +287,3 @@ def ViscousBurgersSolution(X, t):
         Uana[i] = -2.0 * math.sinh(X[i]) / (math.cosh(X[i])
                                             - math.exp(-t))
     return Uana
-
-#   ***********************************************************************

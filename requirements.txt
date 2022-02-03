@@ -1,3 +1,7 @@
 sphinx>=1.4
 ipykernel
 nbsphinx
+
+numpy~=1.22.1
+matplotlib~=3.5.1
+setuptools==60.7.1

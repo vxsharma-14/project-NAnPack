@@ -14,7 +14,7 @@ conduction equation, which is expressed as:
                 u: measurable quanity
 
     When f(x,y) = 0, the Poisson's equation reduces to Laplace's equations.
-    The nummerical formulations in this modules solves the Laplace's eqn.
+    The nummerical formulations in this module solves the Laplace's eqn.
 """
 #   ***********************************************************************
 #
@@ -22,13 +22,13 @@ conduction equation, which is expressed as:
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -70,18 +70,16 @@ def PointGaussSeidel(Uo, Beta):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:
@@ -111,7 +109,6 @@ def PointGaussSeidel(Uo, Beta):
                          B2*(U[i][j+1] + U[i][j-1]))
 
     return U
-# *************************************************************************
 
 
 def LineGaussSeidel_i(Uo, Beta):
@@ -126,18 +123,16 @@ def LineGaussSeidel_i(Uo, Beta):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:
@@ -167,7 +162,6 @@ def LineGaussSeidel_i(Uo, Beta):
             U[i][j] = UU[j]
 
     return U
-#   ***********************************************************************
 
 
 def LineGaussSeidel_j(Uo, Beta):
@@ -182,18 +176,16 @@ def LineGaussSeidel_j(Uo, Beta):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:
@@ -223,7 +215,6 @@ def LineGaussSeidel_j(Uo, Beta):
             U[i][j] = UU[i]
 
     return U
-#   ***********************************************************************
 
 
 def PSOR(Uo, Beta, RelaxParam=1.78):
@@ -237,13 +228,12 @@ def PSOR(Uo, Beta, RelaxParam=1.78):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
-    RelaxParam : float, Default = 1.78
+    RelaxParam: float, Default = 1.78
         Relaxation Parameter is used for faster convergence of PSOR method.
         Specify RelaxParam values between 0 and 2.0 to obtain convergence.
         If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
@@ -255,9 +245,8 @@ def PSOR(Uo, Beta, RelaxParam=1.78):
         with the Dirichlet BC imposed (see Hoffmann Vol. 1, pg 164, 170).
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:
@@ -289,7 +278,6 @@ def PSOR(Uo, Beta, RelaxParam=1.78):
                 )
 
     return U
-#   ***********************************************************************
 
 
 def LSOR_i(Uo, Beta, RelaxParam=1.265):
@@ -304,13 +292,12 @@ def LSOR_i(Uo, Beta, RelaxParam=1.265):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
-    RelaxParam : float, Default = 1.265
+    RelaxParam: float, Default = 1.265
         Relaxation Parameter is used for faster convergence of LSOR method.
         Specify RelaxParam values between 0 and 2.0 to obtain convergence.
         If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
@@ -324,9 +311,8 @@ def LSOR_i(Uo, Beta, RelaxParam=1.265):
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
 
@@ -361,7 +347,6 @@ def LSOR_i(Uo, Beta, RelaxParam=1.265):
             U[i][j] = UU[j]
 
     return U
-#   ***********************************************************************
 
 
 def LSOR_j(Uo, Beta, RelaxParam=1.265):
@@ -376,13 +361,12 @@ def LSOR_j(Uo, Beta, RelaxParam=1.265):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
-    RelaxParam : float, Default = 1.265
+    RelaxParam: float, Default = 1.265
         Relaxation Parameter is used for faster convergence of LSOR method.
         Specify RelaxParam values between 0 and 2.0 to obtain convergence.
         If 0 < RelaxParam < 1: it is called UNDER-RELAXATION.
@@ -396,9 +380,8 @@ def LSOR_j(Uo, Beta, RelaxParam=1.265):
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:
@@ -432,7 +415,6 @@ def LSOR_j(Uo, Beta, RelaxParam=1.265):
             U[i][j] = UU[i]
 
     return U
-#   ***********************************************************************
 
 
 def ADI(Uo, Beta):
@@ -446,18 +428,16 @@ def ADI(Uo, Beta):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:
@@ -516,7 +496,6 @@ def ADI(Uo, Beta):
             U[i][j] = UU[j]
 
     return U
-#   ***********************************************************************
 
 
 def ADISOR(Uo, Beta, RelaxParam=1.27):
@@ -530,13 +509,12 @@ def ADISOR(Uo, Beta, RelaxParam=1.27):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable obtained from the previous iteration
-        level, n.
-    Beta : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the domain.
+    Beta: float
         Coefficient in the Laplace's finite difference approximation.
         Beta = dX/dY
-    RelaxParam : float, Default = 1.27
+    RelaxParam: float, Default = 1.27
         Relaxation Parameter is used for faster convergence of ADISOR
         method.
         Specify RelaxParam values between 0 and 2.0 to obtain convergence.
@@ -551,9 +529,8 @@ def ADISOR(Uo, Beta, RelaxParam=1.27):
         (see Hoffmann Vol. 1, pg 172, 183).
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =1d or 2d
+        The dependent variable at time level, n+1 within the domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     if len(shapeU) == 1:

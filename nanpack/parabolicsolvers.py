@@ -21,13 +21,13 @@ conduction equation, which is expressed in 1D as:
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -69,8 +69,8 @@ def FTCS(Uo, diffX, diffY=None):
 
     Parameters
     ----------
-    Uo : 1D or 2D array (depending on the domain dimensions)
-        The dependent variable from time level (n) within the domain.
+    Uo: ndarray[float], =1d, 2d
+        The dependent variable at time level, n within the entire domain.
     diffX : float
         Diffusion number for x-component of the parabolic/diffusion
         equation.
@@ -79,9 +79,8 @@ def FTCS(Uo, diffX, diffY=None):
         equation.
     Returns
     -------
-    U : 1D or 2D array (depending on the domain dimensions)
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =1d, 2d
+        The dependent variable at time level, n+1 within the entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     U = Uo.copy()  # Initialize U
@@ -112,22 +111,21 @@ def DuFortFrankel(Uo, Uo2, diffX, diffY=None):
 
     Parameters
     ----------
-    Uo : 1D or 2D array (depending on the domain dimensions)
-        The dependent variable from time level (n) within the domain.
-    Uo2 : 1D or 2D array
-        The dependent variable at time level (n-1).
-    diffX : float
+    Uo: ndarray[float], =1d, 2d
+        The dependent variable at time level, n within the entire domain.
+    Uo2: ndarray[float], =1d, 2d
+        The dependent variable at time level, n-1 within the entire domain.
+    diffX: float
         Diffusion number for x-component of the parabolic/diffusion
         equation.
-    diffY : float, Default=None for 1-D applications
+    diffY: float, Default=None for 1-D applications
         Diffusion number for y-component of the parabolic/diffusion
         equation.
 
     Returns
     -------
-    U : 1D or 2D array (depending on the domain dimensions)
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =1d, 2d
+        The dependent variable at time level, n+1 within the entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
     U = Uo.copy()  # Initialize U
@@ -162,17 +160,16 @@ def Laasonen(Uo, diffX):
 
     Parameters
     ----------
-    Uo : 1D array
-        The dependent variable from time level (n) within the domain.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the entire domain.
     diffX : float
         Diffusion number for x-component of the parabolic/diffusion
         equation.
 
     Returns
     -------
-    U : 1D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =1d
+        The dependent variable at time level, n+1 within the entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
 
@@ -206,17 +203,16 @@ def CrankNicolson(Uo, diffX):
 
     Parameters
     ----------
-    Uo : 1D array
-        The dependent variable from time level (n) within the domain.
+    Uo: ndarray[float], =1d
+        The dependent variable at time level, n within the entire domain.
     diffX : float
         Diffusion number for x-component of the parabolic/diffusion
         equation.
 
     Returns
     -------
-    U : 1D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =1d
+        The dependent variable at time level, n+1 within the entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
 
@@ -251,20 +247,19 @@ def ADI(Uo, diffX, diffY):
 
     Parameters
     ----------
-    Uo : 2D array
-        The dependent variable from time level (n) within the domain.
-    diffX : float
+    Uo: ndarray[float], =2d
+        The dependent variable at time level, n within the entire domain.
+    diffX: float
         Diffusion number for x-component of the parabolic/diffusion
         equation.
-    diffY : float
+    diffY: float
         Diffusion number for y-component of the parabolic/diffusion
         equation.
 
     Returns
     -------
-    U : 2D array
-        The dependent variable calculated at time level (n+1) within the
-        entire domain.
+    U: ndarray[float], =2d
+        The dependent variable at time level, n+1 within the entire domain.
     """
     shapeU = Uo.shape  # Obtain Dimension
 

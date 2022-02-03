@@ -5,13 +5,13 @@
 #
 #   AUTHOR       Dr. Vishal Sharma
 #
-#   VERSION      1.0.0-alpha4
+#   VERSION      1.0.0-alpha5
 #
 #   WEBSITE      https://github.com/vxsharma-14/project-NAnPack
 #
 #   NAnPack Learner's Edition is distributed under the MIT License.
 #
-#   Copyright (c) 2020 Vishal Sharma
+#   Copyright (c) 2022 Vishal Sharma
 #
 #   Permission is hereby granted, free of charge, to any person
 #   obtaining a copy of this software and associated documentation
@@ -38,11 +38,11 @@
 #
 #   ***********************************************************************
 
-from .backend._readconfig import _ReadConfig
+from .backend.readconfig import ReadConfig
 from .backend.checkconfig import CheckSections, CheckSetupSection
 
 
-class RunConfig(_ReadConfig):
+class RunConfig(ReadConfig):
     """Class to read inputs from configuration file and set-up variables.
 
     This class is depenedent on the configparser package to read the
@@ -53,7 +53,6 @@ class RunConfig(_ReadConfig):
     Attributes
     ----------
     InFileName: str, Default= "./input/config.ini".
-
         The string value representing the file to be read for simulation
         inputs. Allowed file extensions: .ini
     """
@@ -99,7 +98,7 @@ class RunConfig(_ReadConfig):
         # Calculate required quantities.
         self.Mesh()
         self.Initial()
-        self.BC()
+        self.BCinit()
         self.SimStop()
         self.DisplayConfig()
 
@@ -108,16 +107,15 @@ class RunConfig(_ReadConfig):
         # Upon initialization -
         #       1. check - if all sections exist
         CheckSections(self.config, self.File)
-        CheckSetupSection(self.config, self.State, self.Model,
-                          self.Dimension, self.File)
+        CheckSetupSection(self.State, self.Model, self.Dimension)
 
     def Mesh(self):
         """Access meshing inputs from the DOMAIN and MESH sections.
 
-        Call signature :
+        Call signature:
             self.Mesh()
         """
-        from . import mesh
+        import nanpack.meshing as mesh
 
         if self.GridAutoCalc.upper() == 'YES':
             self.iMax, self.jMax = mesh.CalcGridPoints(self.Dimension,
@@ -154,7 +152,7 @@ class RunConfig(_ReadConfig):
                                        self.jMax)
         return self.U
 
-    def BC(self):
+    def BCinit(self):
         """Access boundary condition inputs from the BC section.
 
         Update the boundary conditions of the dependent variable and
@@ -183,10 +181,10 @@ class RunConfig(_ReadConfig):
     def SimStop(self):
         """Access simulation stop setting inputs from the STOP section.
 
-        Call signature :
+        Call signature:
             RunConfig.SimStop()
         """
-        import nanpack.mesh as mesh
+        import nanpack.meshing as mesh
         # *********** SIM STOP SETTINGS ***********
         # Execute this block for:
         # diffusion eq., first-order wave eq. and Burgers eq.
@@ -203,7 +201,7 @@ class RunConfig(_ReadConfig):
     def DisplayConfig(self):
         """Display the configuration to the user for verification.
 
-        Call signature :
+        Call signature:
             RunConfig.DisplayConfig()
         """
         # ************* PRINT CONFIGURATIONS *************
@@ -261,13 +259,14 @@ def CourantNumber(CFL, Dimension):
     """Return the Courant Number.(this function needs modification)."""
     if Dimension.upper() == '1D':
         convX = CFL  # convection coefficient for the x-term.
+        print('Calculating coefficient in the convective equation: Completed.')
+        return convX
 
     elif Dimension.upper() == '2D':
         convX = CFL  # convection coefficient for the x-term.
         convY = CFL  # convection coefficient for the y-term.
-    print('Calculating coefficient in the convective equation: Completed.')
-
-    return convX, convY
+        print('Calculating coefficient in the convective equation: Completed.')
+        return convX, convY
 
 
 def DiffusionNumbers(Dimension, diff, dT, dX, dY=None, Scaling=False):
@@ -283,7 +282,7 @@ def DiffusionNumbers(Dimension, diff, dT, dX, dY=None, Scaling=False):
 
     Parameters
     ----------
-    Dimension : string
+    Dimension: string
         Dimension of the simulation domain.
         Available Options are "1D" or "2D"
     diff: float
@@ -301,7 +300,7 @@ def DiffusionNumbers(Dimension, diff, dT, dX, dY=None, Scaling=False):
 
     Returns
     -------
-    diffX, diffY : float values
+    diffX, diffY: float values
         Diffusion numbers along X and Y axis, respectively.
     """
     if Scaling is False:
@@ -313,6 +312,7 @@ def DiffusionNumbers(Dimension, diff, dT, dX, dY=None, Scaling=False):
             dY2 = dY*dY
             diffY = diff*dT/dY2  # diffusion coefficient for y term.
         print("Calculating diffusion numbers: Completed.")
+        return diffX, diffY
 
     elif Scaling is True:
         dX2 = dX*dX
@@ -321,8 +321,7 @@ def DiffusionNumbers(Dimension, diff, dT, dX, dY=None, Scaling=False):
         if Dimension.upper() == "2D":
             dY2 = dY*dY
             diffY = dT/dY2
-
-    return diffX, diffY
+        return diffX, diffY
 
 
 def NonDimensionalizeTime(dTime, RefLength, Diff):
@@ -336,7 +335,7 @@ def NonDimensionalizeTime(dTime, RefLength, Diff):
 
     Parameters
     ----------
-    dTime : float
+    dTime: float
         Dimensional time or the time step.
     RefLength: float
         Reference or characteristic length.
@@ -345,7 +344,7 @@ def NonDimensionalizeTime(dTime, RefLength, Diff):
 
     Returns
     -------
-    Tstar : float
+    Tstar: float
         Non-dimensional quantity of time.
     """
     from .backend.dimensionalize import NonDimensionalize
@@ -365,14 +364,14 @@ def NonDimensionalizeMesh(dXgrid, RefLength):
 
     Parameters
     ----------
-    dXgrid : float
+    dXgrid: float
         Dimensional grid points locations or grid step size.
     RefLength: float
         Reference or characteristic length.
 
     Returns
     -------
-    Xstar : float
+    Xstar: float
         Non-dimensional quantity of grid.
     """
     from .backend.dimensionalize import NonDimensionalize
