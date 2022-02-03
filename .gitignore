@@ -19,3 +19,7 @@ venv.bak/
 # Spyder project settings
 .spyderproject
 .spyproject
+
+# PyCharm project settings
+.idea/
+.idea/workspace.xml
